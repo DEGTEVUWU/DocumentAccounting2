@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Документы</title>
+    <link rel="stylesheet" href="css/header_style.css">
+    <link rel="stylesheet" href="css/sidebar_style.css">
+    <script src="js/header.js" defer></script>
+</head>
+<body>
+
+<div class="header-container">
+    <div class="left-buttons">
+        <button id="documentsButton" onclick="window.location.href='index.html';">Документы</button>
+        <button id="usersButton" onclick="window.location.href='users.html';">Пользователи</button>
+    </div>
+    <div class="right-buttons">
+        <button id="searchButton" onclick="toggleSidebar();">Поиск</button>
+        <button id="profileButton" style="display: none;" onclick="handleProfileButtonClick();">Профиль</button>
+        <button id="registerButton" onclick="window.location.href='register_user.html';">Регистрация</button>
+        <button id="authButton" onclick="handleAuthButtonClick();">Войти</button>
+    </div>
+</div>
+
+<div id="sidebar" class="sidebar">
+    <span class="closebtn" onclick="toggleSidebar()">×</span> <!-- Значок закрытия -->
+    <form id="searchForm" onsubmit="submitSearchForm(event)">
+        <h2>Поиск документов</h2>
+        <label for="titleCont">Название:</label>
+        <input type="text" id="titleCont" name="titleCont">
+        <label for="number">Номер:</label>
+        <input type="number" id="number" name="number">
+        <label for="authorCont">Имя автора:</label>
+        <input type="text" id="authorCont" name="authorCont">
+        <label for="contentCont">Содержание:</label>
+        <textarea id="contentCont" name="contentCont"></textarea>
+        <label for="typeCont">Тип:</label>
+        <input type="text" id="typeCont" name="typeCont">
+        <label for="creationDate">Дата создания:</label>
+        <input type="date" id="creationDate" name="creationDate">
+
+        <!-- Новые поля для сортировки -->
+        <label for="sortBy">Сортировать по:</label>
+        <select id="sortBy" name="sortBy">
+            <option value="title">Названию</option>
+            <option value="number">Номеру</option>
+            <option value="author">Имени автора</option>
+            <option value="content">Содержанию</option>
+            <option value="type">Типу</option>
+            <option value="creationDate">Дате создания</option>
+        </select>
+
+        <label for="sortDirection">Тип сортировки:</label>
+        <select id="sortDirection" name="sortDirection">
+            <option value="asc">По возрастанию</option>
+            <option value="desc">По убыванию</option>
+        </select>
+
+        <button type="submit">Искать</button>
+    </form>
+</div>
+
+<div id="resultsContainer">
+    <!-- Здесь будут отображаться результаты поиска -->
+</div>
+
+</body>
+</html>

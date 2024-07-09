@@ -1,0 +1,28 @@
+version: 3.9;
+
+volumes:
+  document_accounting:
+
+services:
+  document_accounting_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=ivan
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=document_accounting_db
+    volumes:
+      - document_accounting:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - document_accounting_db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://document_accounting_db:5432/document_accounting_db'
+      JAVA_OPTS: '-Xmx512m'

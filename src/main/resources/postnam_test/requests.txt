@@ -1,0 +1,45 @@
+http://localhost:8080/api/auth/sign-up
+{
+    "name": "iv3",
+    "username": "iv3",
+    "email": "e@mail3.com",
+    "password": "123456",
+    "roles": [
+        {"name": "ROLE_USER"},
+        {"name": "ROLE_ADMIN"}
+    ]
+}
+
+http://localhost:8080/api/auth/sign-in
+{
+    "username": "iv4",
+    "password": "123456"
+}
+
+
+http://localhost:8080/api/documents
+{
+    "title": "title1",
+    "number": 111,
+    "author_id":1,
+    "content": "content1",
+    "type_id": 1
+}
+{
+    "title": "title2",
+    "number": 222,
+    "author_id":2,
+    "content": "content2",
+    "type_id": 2
+}
+
+http://localhost:8080/api/users/1
+
+{
+    "username": "Iv1",
+    "email": "2@mail11.com",
+    "password": "12345678",
+    "name": "Iva11"
+}
+
+localhost:8080/api/documents/search?titleCont=title&authorCont=&contentCont=content&creationDate=&sortBy=author&sortDirection=&pageNumber=1

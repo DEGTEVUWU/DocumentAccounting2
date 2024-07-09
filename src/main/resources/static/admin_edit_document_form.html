@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать документ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/header.js" defer></script> <!-- Подключаем JS для хедера -->
+</head>
+<body>
+<div class="container">
+    <form id="editForm" onsubmit="submitEditForm(event)">
+        <h1>Редактирование документа</h1>
+        <div class="form-group">
+            <label for="title">Заголовок:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="number">Номер:</label>
+            <input type="number" id="number" name="number" required>
+        </div>
+                <div class="form-group">
+                    <label for="author_id">ID Автора:</label>
+                    <input type="number" id="author_id" name="author_id" required>
+                </div>
+        <div class="form-group">
+            <label for="content">Содержание:</label>
+            <textarea id="content" name="content" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="type_id">Тип документа:</label>
+            <select id="type_id" name="type_id" required>
+                <option value="1">Заметка</option>
+                <option value="2">Отчет</option>
+                <option value="3">Презентация</option>
+                <option value="4">Статья</option>
+                <option value="5">По умолчанию</option>
+            </select>
+        </div>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+</div>
+<script src="js/admin_edit_document.js"></script>
+</body>
+</html>

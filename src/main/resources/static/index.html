@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Документы</title>
+    <link rel="stylesheet" href="css/style_index.css">
+    <script src="js/header.js" defer></script> <!-- Подключаем JS для хедера -->
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <h1>Список документов</h1>
+    <button onclick="window.location.href = 'create_document_form.html';">Добавить документ</button>
+    <table id="documentsTable">
+        <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Заголовок</th>
+            <th>Автор</th>
+            <th>Тип</th>
+            <th class="content-column">Содержание</th>
+            <th>Дата создания</th>
+            <th>Дата обновления</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Здесь будут размещены документы -->
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('beforeend', data);
+            updateAuthButton();
+            updateProfileButton(); // Обновление кнопки профиля
+        })
+        .catch(error => console.error('Ошибка загрузки хедера:', error));
+});
+function updateAuthButton() {
+    const authButton = document.getElementById('authButton');
+    const isAuthenticated = checkAuthentication(); // Функция проверки авторизации
+
+    if (isAuthenticated) {
+        authButton.textContent = 'Выйти';
+        authButton.onclick = function() {
+            logout(); // Функция выхода из системы
+        };
+    } else {
+        authButton.textContent = 'Войти';
+        authButton.onclick = function() {
+            window.location.href = 'login_user.html'; // Переход на страницу входа
+        };
+    }
+}
+function updateProfileButton() {
+    const profileButton = document.getElementById('profileButton');
+    const isAuthenticated = checkAuthentication(); // Функция проверки авторизации
+
+    if (isAuthenticated) {
+        fetch('api/users/current-user', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        })
+            .then(response => response.json())
+            .then(user => {
+                profileButton.style.display = 'block';
+                profileButton.onclick = function() {
+                    window.location.href = `user_details.html?id=${user.id}`;
+                };
+            })
+            .catch(error => console.error('Ошибка получения текущего пользователя:', error));
+    } else {
+        profileButton.style.display = 'none';
+    }
+}
+function checkAuthentication() {
+    // Логика проверки авторизации пользователя
+    // Например, проверка наличия токена в localStorage
+    return !!localStorage.getItem('authToken');
+}
+
+function logout() {
+    localStorage.removeItem('authToken');
+    fetch('api/auth/sign-out', {
+        method: 'POST',
+        credentials: 'include' // необходимо для отправки кук
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            window.location.href = 'index.html';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function handleAuthButtonClick() {
+    const isAuthenticated = checkAuthentication();
+    if (isAuthenticated) {
+        logout();
+    } else {
+        window.location.href = 'login_user.html';
+    }
+}
+
+//сайд бар по поиску
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.style.width === '300px') {
+        sidebar.style.width = '0';
+    } else {
+        sidebar.style.width = '300px';
+    }
+}
+
+function submitSearchForm(event) {
+    event.preventDefault();
+    const form = document.getElementById('searchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+    console.log("params - ", params);
+    // Сохранение параметров запроса в localStorage
+    localStorage.setItem('searchParams', params);
+
+    // Перенаправление на страницу результатов поиска
+    window.location.href = 'search_documents.html';
+
+    // fetch(`/api/documents/search?${params}`, {
+    //     method: 'GET',
+    //     headers: {
+    //         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+    //     }
+    // })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log("data - ", data);
+    //         // displaySearchResults(data);
+    //         localStorage.setItem('searchResults', JSON.stringify(data)); // Сохранение результатов поиска
+    //         window.location.href = 'search_documents.html'; // Перенаправление на страницу результатов поиска
+    //     })
+    //     .catch(error => console.error('Ошибка поиска документов:', error));
+}
+
+function displaySearchResults(data) {
+    const resultsContainer = document.getElementById('resultsContainer');
+    resultsContainer.innerHTML = ''; // Очистить предыдущие результаты
+
+    data.content.forEach(doc => {
+        const docElement = document.createElement('div');
+        docElement.className = 'document';
+        docElement.innerHTML = `
+            <h3>${doc.title}</h3>
+            <p><strong>Номер:</strong> ${doc.number}</p>
+            <p><strong>Автор:</strong> ${doc.author}</p>
+            <p><strong>Содержание:</strong> ${doc.content}</p>
+            <p><strong>Тип:</strong> ${doc.type}</p>
+            <p><strong>Дата создания:</strong> ${doc.creationDate}</p>
+        `;
+        resultsContainer.appendChild(docElement);
+    });
+}
