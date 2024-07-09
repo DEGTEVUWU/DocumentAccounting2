@@ -16,6 +16,15 @@ restart:
 
 # Быстрая пересборка только измененного кода
 restart-fast:
-	docker-compose up -d --no-deps --build app
+	sudo docker-compose up -d --no-deps --build app
+
+logs:
+	sudo docker-compose logs
+
+stop:
+	sudo docker compose stop
+
+start:
+	sudo docker compose start
 
 .PHONY: build
