@@ -43,7 +43,7 @@ public class DataInitializer implements ApplicationRunner {
         createAdminEntity();
         createModeratorEntity();
         logger.info("создал админа и модера");
-        createDocuments();
+//        createDocuments();
     }
 
     private void createAdminEntity() {
