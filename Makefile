@@ -10,9 +10,9 @@ restart-d:
 
 # пересборка
 restart:
-	sudo docker compose down
-	sudo docker compose build
-	sudo docker compose up -d
+	sudo docker-compose down
+	sudo docker-compose build
+	sudo docker-compose up -d
 
 # Быстрая пересборка только измененного кода
 restart-fast:
@@ -22,9 +22,9 @@ logs:
 	sudo docker-compose logs
 
 stop:
-	sudo docker compose stop
+	sudo docker-compose stop
 
 start:
-	sudo docker compose start
+	sudo docker-compose start
 
 .PHONY: build
