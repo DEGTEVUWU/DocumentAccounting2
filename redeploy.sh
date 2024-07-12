@@ -9,6 +9,7 @@ VM_IP=158.160.126.62
 
 # Путь на виртуальной машине
 VM_PROJECT_PATH=/home/ivan_vm
+VM_DOCKER_COMPOSE_FROM_PROJECT_PATH=/home/ivan_vm/DocumentAccounting2
 
 # Копируем проект на виртуальную машину
 echo "Копирование проекта на удаленную машину..."
@@ -17,7 +18,7 @@ scp -r $PROJECT_PATH $VM_USER@$VM_IP:$VM_PROJECT_PATH
 # Подключаемся к виртуальной машине и перезапускаем контейнеры
 echo "Перезапуск контейнеров на удаленной машине..."
 ssh $VM_USER@$VM_IP << EOF
-cd $VM_PROJECT_PATH
+cd $VM_DOCKER_COMPOSE_FROM_PROJECT_PATH
 sudo docker-compose down
 sudo docker-compose up --build -d
 exit
