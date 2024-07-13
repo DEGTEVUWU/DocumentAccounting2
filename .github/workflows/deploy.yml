@@ -22,7 +22,7 @@ jobs:
         env:
           VM_USER: ivan_vm
           VM_IP: 158.160.126.62
-          VM_PROJECT_PATH: /home/ivan_vm
+          VM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
           VM_DOCKER_COMPOSE_FROM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
         run: |
           echo "Копирование проекта на удаленную машину..."
@@ -48,3 +48,5 @@ jobs:
 
 #при копированиее данных на сервер использвоать * для указания - скопировать все директории+файлы
 #  из корня проекта, что пушиться на гитхаб
+# здесь в отличии от скрипта на локлаьной машине по деплоя redeploy.sh изменена пер VM_PROJECT_PATH - добавлена директория
+# DocumentAccounting2, чтоб все данные копировались туда, для структуры
