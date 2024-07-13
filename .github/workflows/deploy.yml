@@ -26,7 +26,7 @@ jobs:
           VM_DOCKER_COMPOSE_FROM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
         run: |
           echo "Копирование проекта на удаленную машину..."
-          scp -o StrictHostKeyChecking=no -r . $VM_USER@$VM_IP:$VM_PROJECT_PATH
+          scp -o StrictHostKeyChecking=no -r * $VM_USER@$VM_IP:$VM_PROJECT_PATH
           
           echo "скопировал все, теперь подключаюсь по ssh..."
           ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
