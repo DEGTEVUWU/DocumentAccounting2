@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_FOR_REDEPLOY }}
+
       - name: Copy project and redeploy
         env:
           VM_USER: ivan_vm
