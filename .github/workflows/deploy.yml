@@ -1,0 +1,31 @@
+name: Deploy to Yandex Cloud
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Copy project and redeploy
+        env:
+          VM_USER: ivan_vm
+          VM_IP: 158.160.126.62
+          VM_PROJECT_PATH: /home/ivan_vm
+          VM_DOCKER_COMPOSE_FROM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
+        run: |
+          echo "Копирование проекта на удаленную машину..."
+          scp -r . $VM_USER@$VM_IP:$VM_PROJECT_PATH
+          ssh $VM_USER@$VM_IP << EOF
+          cd $VM_DOCKER_COMPOSE_FROM_PROJECT_PATH
+          echo "Перезапуск контейнеров на удаленной машине..."
+          sudo docker-compose down
+          sudo docker-compose up --build -d
+          exit
+          EOF
