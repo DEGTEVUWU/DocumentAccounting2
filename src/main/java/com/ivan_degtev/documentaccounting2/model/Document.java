@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -50,4 +53,7 @@ public class Document implements BaseEntity {
 
     @UpdateTimestamp
     private LocalDate updateDate;
+
+    @JsonProperty(value = "public_document", defaultValue = "false")
+    private Boolean publicDocument = false;
 }

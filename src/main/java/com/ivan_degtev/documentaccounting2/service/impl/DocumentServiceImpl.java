@@ -62,7 +62,7 @@ public class DocumentServiceImpl implements DocumentService {
         return resultList;
     }
     public List<DocumentDTO> getAllForUsers(Long userId) {
-        List<Document> documents = documentRepository.findAllByAuthorIdUser(userId);
+        List<Document> documents = documentRepository.findAllByAuthorIdUserAndPublicDocument(userId);
         List<DocumentDTO> resultList = documents.stream()
                 .map(documentMapper::toDTO)
                 .toList();
