@@ -27,10 +27,19 @@ jobs:
         run: |
           echo "Копирование проекта на удаленную машину..."
           scp -o StrictHostKeyChecking=no -r . $VM_USER@$VM_IP:$VM_PROJECT_PATH
+          
+          echo "скопировал все, теперь подключаюсь по ssh..."
           ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
+          
+          echo "Подключился,теперь перехожу в папку с docker-compose..."
           cd $VM_DOCKER_COMPOSE_FROM_PROJECT_PATH
+          
           echo "Перезапуск контейнеров на удаленной машине..."
           sudo docker-compose down
+          
+          echo "Выключил контейнеры..."
           sudo docker-compose up --build -d
+          
+          echo "Включил контейнеры..."
           exit
           EOF
