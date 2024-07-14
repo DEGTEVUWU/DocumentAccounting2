@@ -79,7 +79,7 @@ public class DocumentServiceImpl implements DocumentService {
         Pageable pageable = PageRequest.of(pageNumber - 1, 10, sort);
         logger.info("имею пейджебел из параметров {}", pageable.toString());
         Page<Document> documents = documentRepository.findAll(spec, pageable);
-        logger.info("имею страницу документов из репохитория  {}", documents.toString());
+        logger.info("имею страницу документов из репозитория  {}", documents.toString());
         return documents.map(documentMapper::toDTO);
     }
 
