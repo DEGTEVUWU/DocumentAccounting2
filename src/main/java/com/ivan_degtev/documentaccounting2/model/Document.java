@@ -38,7 +38,7 @@ public class Document implements BaseEntity {
     @NotNull
     private Long number;
 
-    @NotNull
+//    @NotNull
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.EAGER)
     private User author;
 

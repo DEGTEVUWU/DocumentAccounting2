@@ -52,6 +52,8 @@ public class UserController {
      */
     @GetMapping(path = "/check-current-user-is-author/{documentId}")
     public ResponseEntity<Boolean> checkCurrentUserIsAuthor(@PathVariable  Long documentId) {
+        logger.info("зашёл в ручку проверки текущего юзера на авторства для показа кнопки удаления ," +
+                " id документа{}", documentId);
         return ResponseEntity.ok(userUtils.currentUserIsAuthor(documentId));
     }
 

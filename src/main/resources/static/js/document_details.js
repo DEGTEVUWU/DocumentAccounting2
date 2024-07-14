@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('docCreationDate').textContent = docData.creationDate;
                 document.getElementById('docUpdateDate').textContent = docData.updateDate ? docData.updateDate : 'Нет данных';
 
-                checkUserRole();
-                checkCurrentUserIsAuthor();
+                checkUserPermissions();
+
             })
             .catch(error => {
                 console.error('Ошибка:', error);
@@ -48,68 +48,51 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
-    function checkUserRole() {
-        fetch(`/api/documents/${documentId}`, {
+    function checkUserPermissions() {
+        const documentFetch = fetch(`/api/documents/${documentId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Не удалось получить информацию о пользователе');
-                }
-                return response.json();
-            })
-            .then(document => {
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Не удалось получить информацию о документе');
+            }
+            return response.json();
+        });
+
+        const authorFetch = fetch(`/api/users/check-current-user-is-author/${documentId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Не удалось получить информацию о том, является ли юзер автором документа или нет');
+            }
+            return response.json();
+        });
+
+        Promise.all([documentFetch, authorFetch])
+            .then(([document, isAuthor]) => {
                 const roles = document.author.roles.map(role => role.name);
-                if (roles.includes('ROLE_ADMIN')) {
-                    deleteButton.style.display = 'block'; // Показываем кнопку удаления
-                    editButton.onclick = function() {
-                        window.location.href = `admin_edit_document_form.html?id=${documentId}`;
-                    };
-                } else {
-                    deleteButton.style.display = 'none'; // Скрываем кнопку удаления
-                    editButton.onclick = function() {
-                        window.location.href = `edit_document_form.html?id=${documentId}`;
-                    };
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-            });
-    }
-    function checkCurrentUserIsAuthor() {
-        fetch(`/api/users/check-current-user-is-author/${documentId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Не удалось получить информацию о том, является ли юзер автором документа или нет');
-                }
-                return response.json();
-            })
-            .then(isAuthor => {
-                if (isAuthor === true) {
+                if (isAuthor || roles.includes('ROLE_ADMIN')) {
                     deleteButton.style.display = 'block'; // Показываем кнопку удаления
                 } else {
                     deleteButton.style.display = 'none'; // Скрываем кнопку удаления
                 }
+
+                editButton.onclick = function() {
+                    const editUrl = roles.includes('ROLE_ADMIN') ? `admin_edit_document_form.html?id=${documentId}` : `edit_document_form.html?id=${documentId}`;
+                    window.location.href = editUrl;
+                };
             })
             .catch(error => {
                 console.error('Ошибка:', error);
             });
     }
 
-    // Установить обработчики событий
     deleteButton.onclick = deleteDocument;
-
-    // Проверить роль пользователя при загрузке страницы и является ли юзер автором документа
-    // checkUserRole();
-    // checkCurrentUserIsAuthor();
 
     // Загрузить данные документа при загрузке страницы
     loadDocumentData();

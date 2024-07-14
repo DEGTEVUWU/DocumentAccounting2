@@ -47,6 +47,8 @@ public class UserUtils {
         if (document == null) {
             return false;
         }
+        logger.info("есть и текущий юзер  {}", currentUser);
+        logger.info("и документ и они не пустые, айди автора у документа равно {}", document.getAuthor());
         return document.getAuthor().getIdUser().equals(currentUser.getIdUser());
     }
 }
