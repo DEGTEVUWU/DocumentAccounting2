@@ -49,14 +49,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function checkUserPermissions() {
-        const documentFetch = fetch(`/api/documents/${documentId}`, {
+        const getTheRoleOfTheCurrentUser = fetch(`/api/users/current-user`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         }).then(response => {
+            console.log('получили инфу о текущем авторизованном пользователе', response);
             if (!response.ok) {
-                throw new Error('Не удалось получить информацию о документе');
+                throw new Error('Не удалось получить информацию о текущем авторизованном пользователе');
             }
             return response.json();
         });
@@ -73,9 +74,10 @@ document.addEventListener("DOMContentLoaded", function() {
             return response.json();
         });
 
-        Promise.all([documentFetch, authorFetch])
-            .then(([document, isAuthor]) => {
-                const roles = document.author.roles.map(role => role.name);
+        Promise.all([getTheRoleOfTheCurrentUser, authorFetch])
+            .then(([currentUser, isAuthor]) => {
+                const roles = currentUser.roles.map(role => role.name);
+                console.log('вытащили из документа роли {}', roles);
                 if (isAuthor || roles.includes('ROLE_ADMIN')) {
                     deleteButton.style.display = 'block'; // Показываем кнопку удаления
                 } else {
