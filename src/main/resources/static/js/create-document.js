@@ -13,12 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error('Ошибка при загрузке пользователей:', error));
 });
-// Настройка выбора и отмены выбора по клику
-// document.getElementById('available_for').addEventListener('click', function(e) {
-//     if (e.target.tagName === 'OPTION') {
-//         e.target.selected = !e.target.selected;
-//     }
-// });
 
 function submitForm(event) {
     event.preventDefault();

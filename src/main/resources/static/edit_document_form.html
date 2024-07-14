@@ -32,9 +32,22 @@
                 <option value="5">По умолчанию</option>
             </select>
         </div>
+        <div class="form-group">
+            <label for="available_for">Сделать доступным для:</label>
+            <select id="available_for" name="available_for" multiple class="styled-select">
+                <!-- Динамически заполнится пользователями -->
+            </select>
+        </div>
 
-        <button type="submit">Сохранить изменения</button>
+        <div class="form-actions">
+            <label for="public_document">
+                <input type="checkbox" id="public_document" name="public_document">
+                Сделать документ публичным
+            </label>
+            <button type="submit">Сохранить изменения</button>
+        </div>
     </form>
+
 </div>
 <script src="js/edit-document.js"></script>
 </body>
