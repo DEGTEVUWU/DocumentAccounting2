@@ -16,6 +16,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "documents")
@@ -56,4 +58,13 @@ public class Document implements BaseEntity {
 
     @JsonProperty(value = "public_document", defaultValue = "false")
     private Boolean publicDocument = false;
+
+    @JsonProperty(value = "available_for")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "document_user_access",
+            joinColumns = @JoinColumn(name = "id_document"),
+            inverseJoinColumns = @JoinColumn(name = "id_user")
+    )
+    private Set<User> availableFor = new HashSet<>();
 }

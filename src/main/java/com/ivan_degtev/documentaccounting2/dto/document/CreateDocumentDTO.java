@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @ToString
@@ -20,4 +22,8 @@ public class CreateDocumentDTO {
     private String content;
     @JsonProperty("type_id")
     private Long typeId;
+    @JsonProperty(value = "public_document", defaultValue = "false")
+    private Boolean publicDocument = false; //по умолчанию, при отсутсвии поля в ДТО
+    @JsonProperty("available_for")
+    private Set<Long> availableFor;
 }

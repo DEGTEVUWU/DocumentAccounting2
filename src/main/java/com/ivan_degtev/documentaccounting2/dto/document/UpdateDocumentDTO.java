@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @ToString
@@ -30,5 +32,8 @@ public class UpdateDocumentDTO {
     @JsonProperty("type_id")
     @NotNull
     private JsonNullable<Long> typeId;
-
+    @JsonProperty("public_document")
+    private Boolean publicDocument;
+    @JsonProperty("available_for")
+    private JsonNullable<Set<Long>> availableFor;
 }

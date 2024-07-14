@@ -26,10 +26,6 @@ public abstract class UserMapper {
     @Autowired
     private RoleRepository roleRepository;
 
-//    protected UserMapper(RoleRepository roleRepository) {
-//        this.roleRepository = roleRepository;
-//    }
-
     @Mapping(source = "idUser",  target = "id")
     public abstract UserDTO toDTO(User user);
     public abstract User toUser(UserRegisterDTO userRegisterDTO);

@@ -43,3 +43,16 @@ http://localhost:8080/api/users/1
 }
 
 localhost:8080/api/documents/search?titleCont=title&authorCont=&contentCont=content&creationDate=&sortBy=author&sortDirection=&pageNumber=1
+
+
+http://localhost:8080/api/documents
+
+{
+    "title": "title1",
+    "number": 1234,
+    "author_id": 1,
+    "content": "Content",
+    "type_id": 2,
+    "available_for": [3]
+}
+

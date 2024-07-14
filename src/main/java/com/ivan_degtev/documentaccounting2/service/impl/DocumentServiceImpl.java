@@ -56,9 +56,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<DocumentDTO> getAll() {
         List<Document> documents = documentRepository.findAll();
+        logger.info("получил лист всех документов {}", documents);
         List<DocumentDTO> resultList = documents.stream()
                 .map(documentMapper::toDTO)
                 .toList();
+        logger.info("замапил их в  лист всех дто {}", resultList);
         return resultList;
     }
     public List<DocumentDTO> getAllForUsers(Long userId) {
@@ -86,6 +88,10 @@ public class DocumentServiceImpl implements DocumentService {
      */
     @Transactional
     public DocumentDTO create(CreateDocumentDTO documentData) throws ResourceNotValidException {
+        logger.info(" зашёл в сервис создания док-та {}", documentData);
+        if (documentData.getPublicDocument() == null) {
+            documentData.setPublicDocument(false); // Установите значение по умолчанию, если оно не указано
+        }
         Long idCurrentUser = userUtils.getCurrentUser().getIdUser();
         logger.info("айди текущего юзера {}", idCurrentUser);
         documentData.setAuthorId(idCurrentUser);
