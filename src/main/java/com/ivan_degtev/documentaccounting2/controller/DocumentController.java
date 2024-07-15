@@ -71,7 +71,8 @@ public class DocumentController {
 
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)" +
+            " or @userUtils.currentDocumentIsPublicOrAvailable(#id)")
     public ResponseEntity<DocumentDTO> show(@PathVariable Long id) {
         logger.info("Запрошен документ с ID: {}", id);
         DocumentDTO document = documentService.findById(id);

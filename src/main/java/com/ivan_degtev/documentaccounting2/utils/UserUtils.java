@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.utils;
 
+import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import com.ivan_degtev.documentaccounting2.model.Document;
 import com.ivan_degtev.documentaccounting2.model.User;
@@ -39,16 +40,23 @@ public class UserUtils {
 
     public boolean currentUserIsAuthor(Long documentId) {
         User currentUser = getCurrentUser();
-        if (currentUser == null) {
-            return false;
-        }
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotValidException("Document with this id " + documentId + " not found!"));
-        if (document == null) {
-            return false;
-        }
         logger.info("есть и текущий юзер  {}", currentUser);
         logger.info("и документ и они не пустые, айди автора у документа равно {}", document.getAuthor());
         return document.getAuthor().getIdUser().equals(currentUser.getIdUser());
+    }
+
+    public boolean currentDocumentIsPublicOrAvailable(Long documentId) {
+        User currentUser = getCurrentUser();
+        Document currentDocument = documentRepository.findById(documentId)
+                .orElseThrow(() -> new NotFoundException("Document with this id " + documentId + " not found!"));
+        logger.info("зашел в проверку доступности документа, текущего юзера и документа нашёл  {}", currentDocument);
+        if (currentDocument.getPublicDocument()) {
+            return true;
+        }
+        return currentDocument.getAvailableFor()
+                .stream()
+                .anyMatch(user -> user.getIdUser().equals(currentUser.getIdUser()));
     }
 }
