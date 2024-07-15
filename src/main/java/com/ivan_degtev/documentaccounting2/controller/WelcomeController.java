@@ -10,6 +10,6 @@ public class WelcomeController {
 
     @GetMapping()
     public String welcome() {
-        return "redirect:/api/auth/sign-in";
+        return "redirect:/register_user.html";
     }
 }
