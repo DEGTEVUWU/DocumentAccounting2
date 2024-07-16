@@ -4,6 +4,7 @@ package com.ivan_degtev.documentaccounting2.controller;
 
 import com.ivan_degtev.documentaccounting2.component.DataInitializer;
 import com.ivan_degtev.documentaccounting2.dto.auth.LoginRequestDTO;
+import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.model.Document;
@@ -44,21 +45,25 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.util.Map;
+import java.util.Set;
 
+import static com.ivan_degtev.documentaccounting2.model.enums.RoleEnum.ROLE_MODERATOR;
 import static com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum.NOTE;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class UserControllerIntegrationTest {
     private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -66,15 +71,11 @@ public class UserControllerIntegrationTest {
     @Autowired
     private DocumentRepository documentRepository;
     @Autowired
-    private TypeDocumentRepository typeDocumentRepository;
-    @Autowired
     private AuthController authController;
     @Autowired
     private DataInitializer dataInitializer;
     @Autowired
     private UserUtils userUtils;
-    @Autowired
-    private JwtUtils jwtUtils;
     private String token;
 
 
@@ -98,8 +99,6 @@ public class UserControllerIntegrationTest {
 
         createTestDocuments();
         logger.info("закинул 1 тестовый документ в базу {}", documentRepository.findAll().size());
-
-
     }
 
     @Test
@@ -137,19 +136,13 @@ public class UserControllerIntegrationTest {
 
     @Test
     void updateForUser_ShouldReturnUpdatedUser_WhenValidData() throws Exception {
-        Long userIdToUpdate = userRepository.findByUsername("admin").get().getIdUser();
+        Long userIdToUpdate = findCurrentUserId();
         logger.info("айди админа в данной итерации = {}", userIdToUpdate);
 
-        UpdateUserDTOForUser updateUserDTO = new UpdateUserDTOForUser();
-        updateUserDTO.setUsername(JsonNullable.of("newUsername"));
-        updateUserDTO.setName(JsonNullable.of("newName"));
-        updateUserDTO.setEmail(JsonNullable.of("newemail@example.com"));
-        updateUserDTO.setPassword(JsonNullable.of("newPassword"));
+        UpdateUserDTOForUser updateUserDTO = createTestValidUserUpdateDto();
 
         logger.info("имею юзера в базе {}", userRepository.findByUsername("admin"));
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Поддержка Java Time API
-        objectMapper.registerModule(new JsonNullableModule()); // Поддержка JsonNullable
+        ObjectMapper objectMapper = createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(updateUserDTO);
 
         mockMvc.perform(put("/api/users/{id}", userIdToUpdate)
@@ -161,18 +154,78 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.name", is("newName")))
                 .andExpect(jsonPath("$.email", is("newemail@example.com")));
     }
+//    @Test
+//    void updateForUser_ShouldReturnBadRequest_WhenInvalidData() throws Exception {
+//        Long userIdToUpdate = findCurrentUserId();
+//        logger.info("айди админа в данной итерации = {}", userIdToUpdate);
+//
+//        UpdateUserDTOForUser updateUserDTO = createTestNotValidUserUpdateDto();
+//        ObjectMapper objectMapper = createObjectMapper();
+//        String jsonRequest = objectMapper.writeValueAsString(updateUserDTO);
+//        mockMvc.perform(put("/api/users/{id}", userIdToUpdate)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(jsonRequest)
+//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+//                .andExpect(status().isBadRequest());
+//    }
+
 
     @Test
     void updateForAdmin() throws Exception {
+        Long userIdToUpdate = findCurrentUserId();
+        logger.info("айди админа в данной итерации = {}", userIdToUpdate);
+
+        UpdateUserDTOForAdmin updateUserDTO = createTestValidUserUpdateDtoForAdmin();
+
+        logger.info("имею юзера в базе {}", userRepository.findByUsername("admin"));
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(updateUserDTO);
+
+        mockMvc.perform(put("/api/users/{id}", userIdToUpdate)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("newUsername")))
+                .andExpect(jsonPath("$.name", is("newName")))
+                .andExpect(jsonPath("$.email", is("newemail@example.com")))
+                .andExpect(jsonPath("$.roles[*].name", hasItems("ROLE_ADMIN", "ROLE_USER")));
     }
 
-    @Test
-    void updateUserWithNotFullField() throws Exception {
-    }
+
+//    @Test
+//    void updateUserWithNotFullField() throws Exception {
+//        User user1 = new User("username4", "name4", "email4@email.com", "1234");
+//        userRepository.save(user1);
+//
+//        Long userIdToUpdate = userRepository.findByUsername("username4").get().getIdUser();
+//
+//        UpdateUserDTOForUser updateUserDTO = createTestValidUserUpdateDtoWithoutSomeField();
+//
+//        ObjectMapper objectMapper = createObjectMapper();
+//        String jsonRequest = objectMapper.writeValueAsString(updateUserDTO);
+//
+//        mockMvc.perform(patch("/api/users/{id}", userIdToUpdate)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(jsonRequest)
+//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.username", is("newUsername")));
+//    }
 
     @Test
-    void delete() throws Exception {
+    void delete_UserCanDeleteOwnResource_ShouldReturnNoContent() throws Exception {
+        Long userId = findCurrentUserId();
+        logger.info("ID текущего пользователя = {}", userId);
+
+        mockMvc.perform(delete("/api/users/{id}", userId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isNoContent());
+
+        assertThat(userRepository.findById(userId)).isEmpty();
     }
+
+
     private void createTestDocuments() {
         TypeDocument typeDocument1 = new TypeDocument();
         typeDocument1.setId(1L);
@@ -189,5 +242,42 @@ public class UserControllerIntegrationTest {
         logger.info("полностью создал тестовый докумен, его айди{}", document1.getId());
         logger.info("полностью создал тестовый докумен, айди его автора {}", document1.getAuthor().getIdUser());
         documentRepository.save(document1);
+    }
+    private UpdateUserDTOForUser createTestNotValidUserUpdateDto() {
+        UpdateUserDTOForUser updateUserDTO = new UpdateUserDTOForUser();
+        updateUserDTO.setUsername(JsonNullable.of("")); // Невалидное имя пользователя
+        updateUserDTO.setEmail(JsonNullable.of("invalid-email")); // Невалидный email
+        return updateUserDTO;
+    }
+    private UpdateUserDTOForUser createTestValidUserUpdateDto() {
+        UpdateUserDTOForUser updateUserDTO = new UpdateUserDTOForUser();
+        updateUserDTO.setUsername(JsonNullable.of("newUsername"));
+        updateUserDTO.setName(JsonNullable.of("newName"));
+        updateUserDTO.setEmail(JsonNullable.of("newemail@example.com"));
+        updateUserDTO.setPassword(JsonNullable.of("newPassword"));
+        return updateUserDTO;
+    }
+    private UpdateUserDTOForUser createTestValidUserUpdateDtoWithoutSomeField() {
+        UpdateUserDTOForUser updateUserDTO = new UpdateUserDTOForUser();
+        updateUserDTO.setUsername(JsonNullable.of("newUsername"));
+        return updateUserDTO;
+    }
+    private UpdateUserDTOForAdmin createTestValidUserUpdateDtoForAdmin() {
+        UpdateUserDTOForAdmin updateUserDTO = new UpdateUserDTOForAdmin();
+        updateUserDTO.setUsername(JsonNullable.of("newUsername"));
+        updateUserDTO.setName(JsonNullable.of("newName"));
+        updateUserDTO.setEmail(JsonNullable.of("newemail@example.com"));
+        updateUserDTO.setPassword(JsonNullable.of("newPassword"));
+        updateUserDTO.setRoleIds(JsonNullable.of(Set.of(1L))); //добавление роли админа
+        return updateUserDTO;
+    }
+    private ObjectMapper createObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule()); // Поддержка Java Time API
+        objectMapper.registerModule(new JsonNullableModule()); // Поддержка JsonNullable
+        return objectMapper;
+    }
+    private Long findCurrentUserId () {
+        return userRepository.findByUsername("admin").get().getIdUser();
     }
 }
