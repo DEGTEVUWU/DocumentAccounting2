@@ -46,6 +46,9 @@ public class DataInitializer implements ApplicationRunner {
 //        createDocuments();
     }
 
+    public void createTestDocuments() {
+        createDocuments();
+    }
     private void createAdminEntity() {
         Optional<User> firstUser = userRepository.findByEmail("diogteff.ivan@yandex.com");
         if (firstUser.isEmpty()) {
@@ -96,7 +99,7 @@ public class DataInitializer implements ApplicationRunner {
         return roleService.findByName(RoleEnum.ROLE_MODERATOR);
     }
     private  void createDocuments() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 1; i++) {
             Document document = new Document();
             document.setId((long) i + 1);
             document.setTitle(faker.book().title());
@@ -105,8 +108,16 @@ public class DataInitializer implements ApplicationRunner {
             document.setType(getDefaultType());
             document.setCreationDate(faker.date().birthday().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             document.setNumber(faker.number().randomNumber());
+            document.setAvailableFor(Set.of());
 
-            documentRepository.save(document);
+            logger.info("сделал объект документа с полями юзер {}", document.getAuthor().getUsername());
+            logger.info("сделал объект документа с полями тип {}", document.getType().getType());
+            try {
+                documentRepository.save(document);
+                logger.info("Document saved successfully: {}", document);
+            } catch (Exception e) {
+                logger.error("Error saving document: {}", document, e);
+            }
         }
     }
     private User getAdmin() {

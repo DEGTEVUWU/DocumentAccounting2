@@ -77,4 +77,10 @@ public class User implements BaseEntity {
         this.email = email;
         this.password = password;
     }
+    public User(String username, String name, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+    }
 }

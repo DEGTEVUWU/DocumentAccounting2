@@ -2,7 +2,9 @@ package com.ivan_degtev.documentaccounting2.model;
 
 import com.ivan_degtev.documentaccounting2.model.enums.RoleEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data

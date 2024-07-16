@@ -46,7 +46,7 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         logger.info("юзер деталс взят из аутентификации принципал{}", authentication.getPrincipal().toString());
         User user = userService.findByUsername(userDetails.getUsername());
-        logger.info("юзер взял из юзер сервиса - репо{}", user.toString());
+        logger.info("юзер взял из юзер сервиса - репо{}", user.getUsername());
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user.getUsername());
         logger.info("создана кука из ютила именно для авторизованного юзера{}", jwtCookie.toString());
         String jwtToken = jwtCookie.getValue();
