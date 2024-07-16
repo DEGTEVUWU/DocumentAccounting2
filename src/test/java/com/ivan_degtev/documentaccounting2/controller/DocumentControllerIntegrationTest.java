@@ -1,6 +1,7 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
 import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
+import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import org.junit.jupiter.api.Test;
@@ -54,15 +55,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.util.Map;
+import java.util.Set;
 
 
 import static com.ivan_degtev.documentaccounting2.model.enums.RoleEnum.ROLE_MODERATOR;
 import static com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum.NOTE;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -94,7 +93,9 @@ class DocumentControllerIntegrationTest {
     @Transactional
     public void setUpForEach() {
         userRepository.deleteAll();
+        logger.info("удалил перед началом теста всех юзеров");
         documentRepository.deleteAll();
+        logger.info("удалил перед началом теста все документы");
         authController.logoutUser();
         dataInitializer.run(null);
 
@@ -183,7 +184,24 @@ class DocumentControllerIntegrationTest {
     }
 
     @Test
-    void create() {
+    void create() throws Exception {
+        CreateDocumentDTO createDocumentDTO = createTestDocumentDTO();
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(createDocumentDTO);
+        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+
+        mockMvc.perform(post("/api/documents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.title", is("title")))
+                .andExpect(jsonPath("$.number", is(1)))
+                .andExpect(jsonPath("$.author.username", is("admin")))
+                .andExpect(jsonPath("$.content", is("content")))
+                .andExpect(jsonPath("$.type.type", is("DEFAULT_DOCUMENT")))
+                .andExpect(jsonPath("$.public_document", is(true)))
+                .andExpect(jsonPath("$.available_for[0]", is(idCurrentUser)));
     }
 
     @Test
@@ -207,8 +225,6 @@ class DocumentControllerIntegrationTest {
     }
 
     private void createTestDocuments() {
-
-
         for (var i = 0; i < 2; i++) {
             TypeDocument typeDocument1 = new TypeDocument();
             typeDocument1.setId((long) i);
@@ -259,4 +275,22 @@ class DocumentControllerIntegrationTest {
         params.setSortDirection("asc");
         return params;
     }
+    private CreateDocumentDTO createTestDocumentDTO() {
+        CreateDocumentDTO createDocumentDTO = new CreateDocumentDTO();
+        createDocumentDTO.setNumber(1L);
+        createDocumentDTO.setTitle("title");
+        createDocumentDTO.setContent("content");
+        createDocumentDTO.setAuthorId(getIdCurrentUser());
+        createDocumentDTO.setTypeId(5L);
+        createDocumentDTO.setPublicDocument(true);
+        createDocumentDTO.setAvailableFor(Set.of(getIdCurrentUser()));
+        return createDocumentDTO;
+    }
+    private Long getIdCurrentUser() {
+        return userRepository.findByUsername("admin").get().getIdUser();
+    }
+//    private int getIdCurrentUserGivenInInt() {
+//        Long id = userRepository.findByUsername("admin").get().getIdUser();
+//        return Math.toIntExact(id);
+//    }
 }

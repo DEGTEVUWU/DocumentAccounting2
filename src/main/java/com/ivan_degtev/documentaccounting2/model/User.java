@@ -72,6 +72,9 @@ public class User implements BaseEntity {
     @JsonIgnore
     private Set<Document> documents = new HashSet<>();
 
+    @ManyToMany(mappedBy = "availableFor", fetch = FetchType.EAGER)
+    private Set<Document> openDocuments = new HashSet<>();
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;

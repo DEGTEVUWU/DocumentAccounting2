@@ -60,11 +60,13 @@ public class Document implements BaseEntity {
     private Boolean publicDocument = false;
 
     @JsonProperty(value = "available_for")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "document_user_access",
             joinColumns = @JoinColumn(name = "id_document"),
-            inverseJoinColumns = @JoinColumn(name = "id_user")
+            inverseJoinColumns = @JoinColumn(name = "id_user",
+                    foreignKey = @ForeignKey(name = "fk_document_user",
+                            foreignKeyDefinition = "FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE"))
     )
     private Set<User> availableFor = new HashSet<>();
 }
