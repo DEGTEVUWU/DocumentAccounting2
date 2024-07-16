@@ -54,7 +54,7 @@ public class UserController {
     public ResponseEntity<Boolean> checkCurrentUserIsAuthor(@PathVariable  Long documentId) {
         logger.info("зашёл в ручку проверки текущего юзера на авторства для показа кнопки удаления ," +
                 " id документа{}", documentId);
-        return ResponseEntity.ok(userUtils.currentUserIsAuthor(documentId));
+        return ResponseEntity.status(HttpStatus.OK).body(userUtils.currentUserIsAuthor(documentId));
     }
 
 

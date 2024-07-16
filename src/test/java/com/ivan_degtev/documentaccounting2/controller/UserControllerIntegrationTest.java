@@ -122,7 +122,7 @@ public class UserControllerIntegrationTest {
         Long documentId = documentRepository.findAll().get(0).getId();
         mockMvc.perform(get("/api/users/check-current-user-is-author/{documentId}", documentId))
                 .andExpect(status().isOk())
-                .andExpect(content().json("true"));
+                .andExpect(content().string("true"));
     }
 
 
