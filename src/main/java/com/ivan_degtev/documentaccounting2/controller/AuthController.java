@@ -63,24 +63,6 @@ public class AuthController {
                 .body(response);
     }
 
-//    @PostMapping("/sign-in")
-//    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-//        );
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        String jwt = jwtUtils.generateTokenFromUsername(userDetails.getUsername()); // Предполагается, что этот метод генерирует JWT
-//
-//        User user = userService.findByUsername(userDetails.getUsername());
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("user", user);
-//        response.put("jwt", jwt); // Включаем сгенерированный JWT в ответ
-//
-//        return ResponseEntity.ok().body(response);
-//    }
-
     @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         logger.info("зашел в мметод регистрации");
