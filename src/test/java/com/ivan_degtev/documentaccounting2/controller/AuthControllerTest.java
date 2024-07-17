@@ -14,6 +14,7 @@ import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.RoleService;
 import com.ivan_degtev.documentaccounting2.service.UserService;
+import com.ivan_degtev.documentaccounting2.utils.JwtUtils;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import io.swagger.annotations.Authorization;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,11 +44,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -70,7 +70,8 @@ class AuthControllerTest {
     @Autowired
     private RoleService roleService;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
+    @Autowired
+    private JwtUtils jwtUtils;
 
     private UserUtils userUtils;
     private String token;
@@ -144,8 +145,19 @@ class AuthControllerTest {
     }
 
     @Test
-    void logoutUser() {
+    void logoutUser() throws Exception {
+        ResponseCookie cleanJwtCookie = ResponseCookie.from("springAuthDemoToken", "")
+                .path("/api")
+                .build();
+
+        mockMvc.perform(post("/api/auth/sign-out")
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, cleanJwtCookie.toString()))
+                .andExpect(content().string("You've been signed out"));
     }
+
+
     private LoginRequestDTO createLoginRequestDTO() {
         return new LoginRequestDTO("admin", "password");
     }
@@ -162,5 +174,10 @@ class AuthControllerTest {
         objectMapper.registerModule(new JavaTimeModule()); // Поддержка Java Time API
         objectMapper.registerModule(new JsonNullableModule()); // Поддержка JsonNullable
         return objectMapper;
+    }
+    private void loginNeUser() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user", "1234");
+        authController.authenticateUser(loginRequestDTO);
+        logger.info("авторизовался под тестовым юзером {}", userRepository.findByUsername("user").get().getIdUser());
     }
 }
