@@ -1,77 +1,48 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
-import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.ivan_degtev.documentaccounting2.component.DataInitializer;
 import com.ivan_degtev.documentaccounting2.dto.auth.LoginRequestDTO;
-import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
-import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
-import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.model.Document;
-import com.ivan_degtev.documentaccounting2.model.Role;
 import com.ivan_degtev.documentaccounting2.model.TypeDocument;
-import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.model.enums.RoleEnum;
 import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
-import com.ivan_degtev.documentaccounting2.repository.TypeDocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
-import com.ivan_degtev.documentaccounting2.utils.JwtUtils;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.util.Map;
 import java.util.Set;
 
 
-import static com.ivan_degtev.documentaccounting2.model.enums.RoleEnum.ROLE_MODERATOR;
 import static com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum.NOTE;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -79,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 class DocumentControllerIntegrationTest {
 
-    private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+    private final Logger logger = LoggerFactory.getLogger(DocumentControllerIntegrationTest.class);
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -244,9 +215,9 @@ class DocumentControllerIntegrationTest {
 
     @Test
     void updateForUser() throws Exception {
-        authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+//        authController.logoutUser();
+//        registerNeUser();
+//        String userToken = loginNeUser();
         // зайти под юзером
         UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTO();
         ObjectMapper objectMapper = createObjectMapper();
@@ -277,15 +248,15 @@ class DocumentControllerIntegrationTest {
         Long idDocument = documentRepository.findAll().get(0).getId();
         Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
 
-        mockMvc.perform(put("/api/documents/{idDocument}", idDocument)
+        mockMvc.perform(put("/api/documents/for_admin/{idDocument}", idDocument)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("newTitle")))
-                .andExpect(jsonPath("$.number", is(0)))
+                .andExpect(jsonPath("$.number", is(1000)))
                 .andExpect(jsonPath("$.content", is("newContent")))
-                .andExpect(jsonPath("$.type.type", is("NOTE")))
+                .andExpect(jsonPath("$.type.type", is("DEFAULT_DOCUMENT")))
                 .andExpect(jsonPath("$.author.idUser", is(idCurrentUser)))
                 .andExpect(jsonPath("$.public_document", is(false)))
                 .andExpect(jsonPath("$.available_for[0]", is(idCurrentUser)));
@@ -411,10 +382,14 @@ class DocumentControllerIntegrationTest {
         logger.info("зарегистрировал тестового юзера в БД {}", userRepository.findByUsername("user").get().getIdUser());
 
     }
-    private void loginNeUser() {
+    private String loginNeUser() {
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user", "1234");
-        authController.authenticateUser(loginRequestDTO);
+        var response = authController.authenticateUser(loginRequestDTO);
         logger.info("авторизовался под тестовым юзером {}", userRepository.findByUsername("user").get().getIdUser());
+        String userToken = ((Map<String, String>) response.getBody()).get("jwtToken");
+        logger.info("получил токен и установил его в глобальную переменную {}", token);
+        return userToken;
+
     }
     private ObjectMapper createObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

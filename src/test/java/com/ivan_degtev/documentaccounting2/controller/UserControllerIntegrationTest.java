@@ -1,30 +1,19 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
-
-
 import com.ivan_degtev.documentaccounting2.component.DataInitializer;
 import com.ivan_degtev.documentaccounting2.dto.auth.LoginRequestDTO;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
-import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.model.Document;
-import com.ivan_degtev.documentaccounting2.model.Role;
 import com.ivan_degtev.documentaccounting2.model.TypeDocument;
 import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.model.enums.RoleEnum;
 import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
-import com.ivan_degtev.documentaccounting2.repository.TypeDocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
-import com.ivan_degtev.documentaccounting2.utils.JwtUtils;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.slf4j.Logger;
@@ -34,36 +23,28 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.util.Map;
 import java.util.Set;
 
-import static com.ivan_degtev.documentaccounting2.model.enums.RoleEnum.ROLE_MODERATOR;
 import static com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum.NOTE;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class UserControllerIntegrationTest {
-    private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+    private final Logger logger = LoggerFactory.getLogger(UserControllerIntegrationTest.class);
     @Autowired
     private MockMvc mockMvc;
     @Autowired

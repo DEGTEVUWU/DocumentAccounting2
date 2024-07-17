@@ -1,7 +1,6 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
 import com.ivan_degtev.documentaccounting2.config.security.UserDetailsImpl;
-import com.ivan_degtev.documentaccounting2.controller.UserController;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
 import com.ivan_degtev.documentaccounting2.dto.user.UserDTO;

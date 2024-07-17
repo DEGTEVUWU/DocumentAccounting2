@@ -1,6 +1,7 @@
 package com.ivan_degtev.documentaccounting2.config;
 
 import org.openapitools.jackson.nullable.JsonNullableModule;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -17,9 +18,9 @@ public class JacksonConfig {
         return builder;
     }
 
-//    @Bean
-//    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-//        return builder -> builder.modules(new JsonNullableModule());
-//    }
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.modules(new JsonNullableModule());
+    }
 }
 //класс соединяет зависимости нуллабл

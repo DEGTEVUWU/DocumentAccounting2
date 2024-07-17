@@ -12,7 +12,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
-import javax.print.attribute.standard.JobKOctets;
 import java.security.Key;
 import java.util.Date;
 

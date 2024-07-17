@@ -10,16 +10,12 @@ import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.TypeDocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.RoleService;
-import com.ivan_degtev.documentaccounting2.service.impl.DocumentServiceImpl;
-import com.ivan_degtev.documentaccounting2.utils.UserUtils;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.datafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +31,6 @@ public class DataInitializer implements ApplicationRunner {
     private final DocumentRepository documentRepository;
     private final TypeDocumentRepository typeDocumentRepository;
     private static final Faker faker = new Faker();
-//    private final UserUtils userUtils;
     private final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Override

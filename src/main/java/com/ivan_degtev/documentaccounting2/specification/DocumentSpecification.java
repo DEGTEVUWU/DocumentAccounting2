@@ -3,14 +3,12 @@ package com.ivan_degtev.documentaccounting2.specification;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.model.Document;
 import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.service.impl.DocumentServiceImpl;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import lombok.AllArgsConstructor;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -34,7 +32,6 @@ public class DocumentSpecification {
                 .and(withTypeCount(params.getTypeCont()))
                 .and(withNumber(params.getNumber()))
                 .and(withCreatedDate(params.getCreationDate()))
-//                .and(withPublicDocument(params.getPublicDocument()))
                 .and(withAvailableFor(idCurrentUser));
     }
 
@@ -73,11 +70,6 @@ public class DocumentSpecification {
                 ? cb.conjunction()
                 : cb.equal(root.get("creationDate"), date);
     }
-//    private Specification<Document> withPublicDocument(Boolean publicDocument) {
-//        return (root, query, cb) -> publicDocument == null
-//                ? cb.conjunction()
-//                : cb.equal(root.get("publicDocument"), publicDocument);
-//    }
 
     public static Specification<Document> withAvailableFor(Long availableForUserId) {
         return (root, query, cb) -> {
@@ -85,7 +77,6 @@ public class DocumentSpecification {
                 return cb.conjunction();
             }
 
-            // Создание подзапроса для проверки наличия пользователя в availableFor
             Subquery<Long> subquery = query.subquery(Long.class);
             logger.info("подзапрос {}", subquery);
             Root<Document> subRoot = subquery.from(Document.class);

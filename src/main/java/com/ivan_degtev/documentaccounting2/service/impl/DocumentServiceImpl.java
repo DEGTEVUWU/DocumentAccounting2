@@ -19,7 +19,6 @@ import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.DocumentService;
 import com.ivan_degtev.documentaccounting2.service.UserService;
 import com.ivan_degtev.documentaccounting2.specification.DocumentSpecification;
-import com.ivan_degtev.documentaccounting2.utils.CustomValidations;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -149,7 +147,7 @@ public class DocumentServiceImpl implements DocumentService {
         return documentDTO;
     }
 
-//    @Transactional
+    @Transactional
     public DocumentDTO updateDocumentWithNotFullField(UpdateDocumentDTO updateDTO, Long id) {
         logger.info("зашел в метод с дто неполной для патча + {}", updateDTO);
         Document document = documentRepository.findById(id)

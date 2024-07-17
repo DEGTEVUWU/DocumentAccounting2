@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.boot.jackson.JsonMixin;
 
 import java.util.HashSet;
 import java.util.Set;
