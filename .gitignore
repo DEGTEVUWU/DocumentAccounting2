@@ -16,6 +16,7 @@ target/
 ### IntelliJ IDEA ###
 .idea
 .src/main/resources/postman_test/
+.src/test/java/com.ivan_degtev.documentaccounting2/controller/testcontrollers/
 *.iws
 *.iml
 *.ipr
