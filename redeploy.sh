@@ -21,5 +21,10 @@ ssh $VM_USER@$VM_IP << EOF
 cd $VM_DOCKER_COMPOSE_FROM_PROJECT_PATH
 sudo docker-compose down
 sudo docker-compose up --build -d
+
+sudo docker container prune -f
+sudo docker image prune -a -f
+sudo docker network prune -f
+sudo docker volume prune -f
 exit
 EOF
