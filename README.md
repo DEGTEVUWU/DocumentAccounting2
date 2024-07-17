@@ -64,6 +64,11 @@ make run
 localhost:8080/v3/api-docs
 localhost:8080/swagger-ui/index.html
 ```
+Для входа под админом, используйте данные:
+```  
+username: admin
+password: password
+```
 
 Обо всех моментах, уточнениях, пожелания или идеях по улучшению проекта, пишите мне [в телеграм](https://t.me/ar_terria)
 
