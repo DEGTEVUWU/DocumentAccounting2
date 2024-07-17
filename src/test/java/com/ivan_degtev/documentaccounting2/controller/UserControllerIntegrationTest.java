@@ -214,7 +214,7 @@ public class UserControllerIntegrationTest {
 //    }
 
     @Test
-    void delete_UserCanDeleteOwnResource_ShouldReturnNoContent() throws Exception {
+    void destroy() throws Exception {
         Long userId = findCurrentUserId();
         logger.info("ID текущего пользователя = {}", userId);
 

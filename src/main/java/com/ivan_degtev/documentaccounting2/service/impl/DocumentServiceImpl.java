@@ -149,13 +149,13 @@ public class DocumentServiceImpl implements DocumentService {
         return documentDTO;
     }
 
-    @Transactional
+//    @Transactional
     public DocumentDTO updateDocumentWithNotFullField(UpdateDocumentDTO updateDTO, Long id) {
-        logger.info("зашел в метод с дто неполной для патчка + {}", updateDTO);
+        logger.info("зашел в метод с дто неполной для патча + {}", updateDTO);
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Document not found: " + id));
         logger.info("нашёл документ + {}", document);
-        if (updateDTO.getAuthorId() != null) {
+        if (updateDTO.getAuthorId().isPresent()) {
             logger.info("зашел в иф автора + {}", updateDTO);
             Long userId = (long) updateDTO.getAuthorId().get();
             User author = userRepository.findById(userId)
@@ -164,19 +164,19 @@ public class DocumentServiceImpl implements DocumentService {
             document.setAuthor(author);
             logger.info("эзасетил в документ автора");
         }
-        if (updateDTO.getTitle() != null) {
+        if (updateDTO.getTitle().isPresent()) {
             updateDTO.getTitle().ifPresent(document::setTitle);
         }
-        if (updateDTO.getTypeId() != null) {
+        if (updateDTO.getTypeId().isPresent()) {
             Long typeId = (long) updateDTO.getTypeId().get();
             TypeDocument typeDocument = typeDocumentRepository.findById(typeId)
                     .orElseThrow(() -> new NotFoundException("TypeDocument with id + "  + typeId + " not found"));
             document.setType(typeDocument);
         }
-        if (updateDTO.getContent() != null) {
+        if (updateDTO.getContent().isPresent()) {
             updateDTO.getContent().ifPresent(document::setContent);
         }
-        if (updateDTO.getNumber() != null) {
+        if (updateDTO.getNumber().isPresent()) {
             updateDTO.getNumber().ifPresent(document::setNumber);
         }
         documentRepository.save(document);

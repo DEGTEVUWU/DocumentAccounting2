@@ -24,7 +24,7 @@ public class UpdateDocumentDTO {
 
     @ValidUser
     @JsonProperty("author_id")
-    @NotNull
+//    @NotNull
     private JsonNullable<Long> authorId;
     @NotNull
     private JsonNullable<String> content;

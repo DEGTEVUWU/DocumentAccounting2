@@ -1,9 +1,11 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
+import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +63,11 @@ import java.util.Set;
 import static com.ivan_degtev.documentaccounting2.model.enums.RoleEnum.ROLE_MODERATOR;
 import static com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum.NOTE;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -87,7 +93,7 @@ class DocumentControllerIntegrationTest {
     @Autowired
     private UserUtils userUtils;
     private String token;
-
+    private String invalidToken;
 
     @BeforeEach
     @Transactional
@@ -205,24 +211,173 @@ class DocumentControllerIntegrationTest {
     }
 
     @Test
-    void show() {
+    void show() throws Exception {
+        Long idTestDocument = documentRepository.findAll().get(0).getId();
+        ObjectMapper objectMapper = createObjectMapper();
+
+        mockMvc.perform(get("/api/documents/{documentId}", idTestDocument))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("title 0")))
+                .andExpect(jsonPath("$.number", is(0)))
+                .andExpect(jsonPath("$.author.username", is("admin")))
+                .andExpect(jsonPath("$.content", is("content 0")))
+                .andExpect(jsonPath("$.type.type", is("NOTE")))
+                .andExpect(jsonPath("$.public_document", is(true)));
+    }
+    @Test
+    void showNotFoundDocument() throws Exception {
+        Long idTestDocument = documentRepository.findAll().get(0).getId();
+        mockMvc.perform(get("/api/documents/{documentId}", idTestDocument + 10))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Document with this id " + (idTestDocument + 10) + " not found!"));
+    }
+    @Test
+    void showForUser() throws Exception {
+        Long idTestDocument = documentRepository.findAll().get(1).getId();
+        authController.logoutUser();
+        registerNeUser();
+        loginNeUser();
+
+        mockMvc.perform(get("/api/documents/{documentId}", idTestDocument))
+                .andExpect(status().isForbidden());
     }
 
     @Test
-    void updateForUser() {
+    void updateForUser() throws Exception {
+        authController.logoutUser();
+        registerNeUser();
+        loginNeUser();
+        // зайти под юзером
+        UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTO();
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
+        Long idDocument = documentRepository.findAll().get(0).getId();
+        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+
+        mockMvc.perform(put("/api/documents/{idDocument}", idDocument)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("newTitle")))
+                .andExpect(jsonPath("$.number", is(1000)))
+                .andExpect(jsonPath("$.content", is("newContent")))
+                .andExpect(jsonPath("$.type.type", is("DEFAULT_DOCUMENT")))
+                .andExpect(jsonPath("$.public_document", is(false)))
+                .andExpect(jsonPath("$.available_for[0]", is(idCurrentUser)));
     }
 
     @Test
-    void updateForAdmin() {
+    void updateForAdmin() throws Exception {
+        UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTO();
+        updateDocumentDTO.setAuthorId(JsonNullable.of(getIdCurrentUser()));
+        // добавить в dto нового автора для документа
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
+        Long idDocument = documentRepository.findAll().get(0).getId();
+        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+
+        mockMvc.perform(put("/api/documents/{idDocument}", idDocument)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("newTitle")))
+                .andExpect(jsonPath("$.number", is(0)))
+                .andExpect(jsonPath("$.content", is("newContent")))
+                .andExpect(jsonPath("$.type.type", is("NOTE")))
+                .andExpect(jsonPath("$.author.idUser", is(idCurrentUser)))
+                .andExpect(jsonPath("$.public_document", is(false)))
+                .andExpect(jsonPath("$.available_for[0]", is(idCurrentUser)));
+    }
+    @Test
+    void updateWithInvalidData() throws Exception {
+        UpdateDocumentDTO invalidUpdateDocumentDTO = createTestNotValidUpdateDocumentDTO();
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(invalidUpdateDocumentDTO);
+        Long idDocument = documentRepository.findAll().get(0).getId();
+
+        mockMvc.perform(put("/api/documents/{id}", idDocument)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.detail").value("must not be null, must not be null, must not be null, must not be null"))
+                .andExpect(jsonPath("$.instance").value("/api/documents/" + idDocument));
+    }
+    @Test
+    void updateFromNotValidUser() throws Exception {
+        authController.logoutUser();
+        registerNeUser();
+        loginNeUser();
+        UpdateDocumentDTO invalidUpdateDocumentDTO = createTestUpdateDocumentDTO();
+        ObjectMapper objectMapper = createObjectMapper();
+        String jsonRequest = objectMapper.writeValueAsString(invalidUpdateDocumentDTO);
+        Long idDocument = documentRepository.findAll().get(0).getId();
+
+        mockMvc.perform(put("/api/documents/{id}", idDocument)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.detail").value("Access Denied"))
+                .andExpect(jsonPath("$.instance").value(""));
     }
 
-    @Test
-    void updateDocumentWithNotFullField() {
-    }
+
+//    @Test
+//    void updateDocumentWithNotFullField() throws Exception {
+//        UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTOWithNotFullFields();
+//
+//        ObjectMapper objectMapper = createObjectMapper();
+//        String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
+//        Long idDocument = documentRepository.findAll().get(0).getId();
+//        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+//
+//        mockMvc.perform(patch("/api/documents/{idDocument}", idDocument)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(jsonRequest)
+//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.title", is("newTitleNotFields")))
+//                .andExpect(jsonPath("$.number", is(1000)))
+//                .andExpect(jsonPath("$.content", is("newContentNotFields")))
+//                .andExpect(jsonPath("$.type.type", is("DEFAULT_DOCUMENT")))
+//                .andExpect(jsonPath("$.author.idUser", is(idCurrentUser)))
+//                .andExpect(jsonPath("$.public_document", is(true)))
+//                .andExpect(jsonPath("$.available_for[0]", is(null)));
+//    }
 
     @Test
-    void delete() {
+    void destroy() throws Exception {
+        Long documentId = documentRepository.findAll().get(0).getId();
+        logger.info("ID документа = {}", documentId);
+
+        mockMvc.perform(delete("/api/documents/{id}", documentId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isNoContent());
+
+        assertThat(documentRepository.findById(documentId)).isEmpty();
     }
+    @Test
+    void destroyFromNotValidUser() throws Exception {
+        authController.logoutUser();
+        registerNeUser();
+        loginNeUser();
+        Long documentId = documentRepository.findAll().get(0).getId();
+        logger.info("ID документа = {}", documentId);
+
+        mockMvc.perform(delete("/api/documents/{id}", documentId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isForbidden());
+
+//        assertThat(documentRepository.findById(documentId)).isEmpty();
+    }
+
 
     private void createTestDocuments() {
         for (var i = 0; i < 2; i++) {
@@ -286,11 +441,36 @@ class DocumentControllerIntegrationTest {
         createDocumentDTO.setAvailableFor(Set.of(getIdCurrentUser()));
         return createDocumentDTO;
     }
+    private UpdateDocumentDTO createTestUpdateDocumentDTO() {
+        UpdateDocumentDTO updateDocumentDTO = new UpdateDocumentDTO();
+        updateDocumentDTO.setTitle(JsonNullable.of("newTitle"));
+        updateDocumentDTO.setContent(JsonNullable.of("newContent"));
+        updateDocumentDTO.setNumber(JsonNullable.of((long) 1000));
+        updateDocumentDTO.setTypeId(JsonNullable.of((long) 5));
+        updateDocumentDTO.setPublicDocument(false);
+        updateDocumentDTO.setAvailableFor(JsonNullable.of(Set.of(getIdCurrentUser())));
+        return updateDocumentDTO;
+    }
+//    private UpdateDocumentDTO createTestUpdateDocumentDTOWithNotFullFields() {
+//        UpdateDocumentDTO updateDocumentDTO = new UpdateDocumentDTO();
+//        updateDocumentDTO.setTitle(JsonNullable.of("newTitleNotFields"));
+//        updateDocumentDTO.setContent(JsonNullable.of("newContentNotFields"));
+//        updateDocumentDTO.setAuthorId(JsonNullable.of(getIdCurrentUser()));
+//        updateDocumentDTO.setAvailableFor(JsonNullable.of(Set.of(getIdCurrentUser())));
+//        return updateDocumentDTO;
+//    }
+    private UpdateDocumentDTO createTestNotValidUpdateDocumentDTO() {
+        UpdateDocumentDTO invalidUpdateDocumentDTO = new UpdateDocumentDTO();
+        invalidUpdateDocumentDTO.setTitle(JsonNullable.of(null));
+        invalidUpdateDocumentDTO.setNumber(JsonNullable.of(null));
+        invalidUpdateDocumentDTO.setAuthorId(JsonNullable.of(null));
+        invalidUpdateDocumentDTO.setContent(JsonNullable.of(null));
+        invalidUpdateDocumentDTO.setTypeId(JsonNullable.of(null));
+        invalidUpdateDocumentDTO.setPublicDocument(false);
+        invalidUpdateDocumentDTO.setAvailableFor(JsonNullable.of(null));
+        return invalidUpdateDocumentDTO;
+    }
     private Long getIdCurrentUser() {
         return userRepository.findByUsername("admin").get().getIdUser();
     }
-//    private int getIdCurrentUserGivenInInt() {
-//        Long id = userRepository.findByUsername("admin").get().getIdUser();
-//        return Math.toIntExact(id);
-//    }
 }

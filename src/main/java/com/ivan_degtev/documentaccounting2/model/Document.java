@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = { "author", "type" })
+@ToString(exclude = { "author", "type", "available_for" })
 public class Document implements BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,5 +69,6 @@ public class Document implements BaseEntity {
                     foreignKey = @ForeignKey(name = "fk_document_user",
                             foreignKeyDefinition = "FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE"))
     )
+    @JsonIgnore
     private Set<User> availableFor = new HashSet<>();
 }

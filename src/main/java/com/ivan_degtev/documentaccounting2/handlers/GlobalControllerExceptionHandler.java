@@ -2,9 +2,11 @@ package com.ivan_degtev.documentaccounting2.handlers;
 
 
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
+import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,5 +49,9 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseStatusException handleBadCredentialsException(BadCredentialsException ex) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad credentials");
+    }
+    @ExceptionHandler(ResourceNotValidException.class)
+    public ResponseEntity<String> handleResourceNotValidException(ResourceNotValidException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
