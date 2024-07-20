@@ -32,7 +32,8 @@ public class FileController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForFiles(#id)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForFiles(#id)" +
+            "or @userUtils.currentFileEntityIsPublicOrAvailable(#id)")
     public ResponseEntity<byte[]> showFile(@PathVariable Long id, @RequestParam(required = false) boolean download)
             throws UnsupportedEncodingException {
         FileEntity fileEntity = fileService.getFile(id);

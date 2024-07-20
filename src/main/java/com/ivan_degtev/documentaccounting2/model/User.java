@@ -21,7 +21,7 @@ import java.util.Set;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
-        })@ToString(exclude = { "documents", "openDocuments" } )
+        })@ToString(exclude = { "documents", "openDocuments", "openFileEntities" } )
 public class User implements BaseEntity {
 
     @Id
@@ -75,6 +75,10 @@ public class User implements BaseEntity {
     @ManyToMany(mappedBy = "availableFor", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Document> openDocuments = new HashSet<>();
+
+    @ManyToMany(mappedBy = "availableFor", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Document> openFileEntities = new HashSet<>();
 
     public User(String username, String email, String password) {
         this.username = username;
