@@ -1,6 +1,6 @@
 package com.ivan_degtev.documentaccounting2.mapper;
 
-import com.ivan_degtev.documentaccounting2.model.BaseEntity;
+import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.EntityManager;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

@@ -1,10 +1,9 @@
 package com.ivan_degtev.documentaccounting2.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
+import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileEntity {
+public class FileEntity implements BaseEntity, Authorable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +26,8 @@ public class FileEntity {
     @Lob
     private byte[] data;
 
-    // Getters and Setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonProperty("author")
+    @JoinColumn(name = "author_id")
+    private User author;
 }

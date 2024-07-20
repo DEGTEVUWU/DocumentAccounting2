@@ -2,6 +2,8 @@ package com.ivan_degtev.documentaccounting2.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
+import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = { "author", "type", "available_for" })
-public class Document implements BaseEntity {
+public class Document implements BaseEntity, Authorable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

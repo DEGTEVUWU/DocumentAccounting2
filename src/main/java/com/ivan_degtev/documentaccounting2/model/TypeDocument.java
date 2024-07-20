@@ -1,8 +1,8 @@
 package com.ivan_degtev.documentaccounting2.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ivan_degtev.documentaccounting2.model.enums.RoleEnum;
 import com.ivan_degtev.documentaccounting2.model.enums.TypeDocumentEnum;
+import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;

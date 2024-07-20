@@ -68,7 +68,7 @@ public class DocumentController {
 
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)" +
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)" +
             " or @userUtils.currentDocumentIsPublicOrAvailable(#id)")
     public ResponseEntity<DocumentDTO> show(@PathVariable Long id) {
         logger.info("Запрошен документ с ID: {}", id);
@@ -78,7 +78,7 @@ public class DocumentController {
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)")
     public ResponseEntity<DocumentDTO> updateForUser(@RequestBody @Valid UpdateDocumentDTO documentData, @PathVariable Long id) {
         DocumentDTO document = documentService.updateForUser(documentData, id);
         return ResponseEntity.status(HttpStatus.OK).body(document);
@@ -91,7 +91,7 @@ public class DocumentController {
         return ResponseEntity.status(HttpStatus.OK).body(document);
     }
     @PatchMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)")
     public ResponseEntity<DocumentDTO> updateDocumentWithNotFullField(@PathVariable Long id,
                                                          @RequestBody UpdateDocumentDTO documentUpdateDTO) {
         DocumentDTO document = documentService.updateDocumentWithNotFullField(documentUpdateDTO, id);
@@ -99,7 +99,7 @@ public class DocumentController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthor(#id)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         documentService.delete(id);

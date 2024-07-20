@@ -1,6 +1,7 @@
 package com.ivan_degtev.documentaccounting2.handlers;
 
 
+import com.ivan_degtev.documentaccounting2.exceptions.NotAuthenticatedException;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import org.springframework.dao.DataAccessException;
@@ -53,5 +54,9 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(ResourceNotValidException.class)
     public ResponseEntity<String> handleResourceNotValidException(ResourceNotValidException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+    @ExceptionHandler(NotAuthenticatedException.class)
+    public ResponseEntity<String> handleResourceNotValidException(NotAuthenticatedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }
