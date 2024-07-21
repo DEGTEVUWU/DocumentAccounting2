@@ -5,6 +5,10 @@ import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -20,4 +24,11 @@ public class Role implements BaseEntity {
     @Column(length = 20)
     private RoleEnum name;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDate creationDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDate updateDate;
 }

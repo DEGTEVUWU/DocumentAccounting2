@@ -3,6 +3,7 @@ package com.ivan_degtev.documentaccounting2.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
+import com.ivan_degtev.documentaccounting2.model.interfaces.Available;
 import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
@@ -50,12 +52,6 @@ public class Document implements BaseEntity, Authorable {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.EAGER)
     private TypeDocument type;
 
-    @CreatedDate
-    private LocalDate creationDate;
-
-    @UpdateTimestamp
-    private LocalDate updateDate;
-
     @JsonProperty(value = "public_document", defaultValue = "false")
     private Boolean publicDocument = false;
 
@@ -70,4 +66,12 @@ public class Document implements BaseEntity, Authorable {
     )
     @JsonIgnore
     private Set<User> availableFor = new HashSet<>();
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDate creationDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDate updateDate;
 }

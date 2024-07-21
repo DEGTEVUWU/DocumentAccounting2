@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <link rel="stylesheet" href="css/download_file.css">-->
+    <script src="js/files/files-downloads.js" defer></script>
+
+    <title>File Upload</title>
+</head>
+
+<body>
+<h1>Upload File</h1>
+<form id="fileForm" onsubmit="uploadFile(event)">
+    <input type="file" id="fileInput" name="file" />
+    <div class="form-group">
+        <label for="available_for">Сделать доступным для:</label>
+        <select id="available_for" name="available_for" multiple class="styled-select">
+            <!-- Динамически заполнится пользователями -->
+        </select>
+    </div>
+    <div class="form-actions">
+        <label for="public_document">
+            <input type="checkbox" id="public_document" name="public_document">
+            Сделать документ публичным
+        </label>
+    </div>
+    <button type="submit">Upload</button>
+</form>
+
+<h1>View File</h1>
+<input type="text" id="fileIdInput" placeholder="Enter file ID" />
+<button onclick="viewFile()">View</button>
+<button onclick="downloadFile()">Download</button>
+
+</body>
+</html>

@@ -10,7 +10,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,6 +82,14 @@ public class User implements BaseEntity {
     @ManyToMany(mappedBy = "availableFor", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Document> openFileEntities = new HashSet<>();
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDate creationDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDate updateDate;
 
     public User(String username, String email, String password) {
         this.username = username;

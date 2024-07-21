@@ -1,5 +1,7 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.service.impl.FileServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +28,28 @@ public class FileController {
     private FileServiceImpl fileService;
 
     @PostMapping("/upload")
-    public FileEntity uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        return fileService.storeFile(file);
-    }
+    public FileEntity uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestPart("params") String paramsJson
+    ) throws IOException
+    {
+        ObjectMapper objectMapper = new ObjectMapper();
+        FileEntityParamsDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityParamsDTO.class);
 
+        log.info("получили файл с параметрами {}", file.getOriginalFilename());
+        log.info("получили дто с  параметрами {}", paramsDTO.toString());
+        return fileService.storeFile(file, paramsDTO);
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForFiles(#id)" +
-            "or @userUtils.currentFileEntityIsPublicOrAvailable(#id)")
-    public ResponseEntity<byte[]> showFile(@PathVariable Long id, @RequestParam(required = false) boolean download)
-            throws UnsupportedEncodingException {
+            "or @userUtils.currentFileEntityIsPublicOrAvailableForFileEntity(#id)")
+    public ResponseEntity<byte[]> showFile(
+            @PathVariable Long id,
+            @RequestParam(required = false) boolean download
+    )
+            throws UnsupportedEncodingException
+    {
         FileEntity fileEntity = fileService.getFile(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -50,6 +64,7 @@ public class FileController {
                 .headers(headers)
                 .body(fileEntity.getData());
     }
+
     @DeleteMapping(path = "{id}")
     public ResponseEntity<String> deleteFile(@PathVariable Long id) throws FileNotFoundException {
         fileService.deleteFile(id);

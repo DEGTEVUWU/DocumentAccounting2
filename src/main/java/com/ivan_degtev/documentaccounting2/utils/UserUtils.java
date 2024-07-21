@@ -7,6 +7,7 @@ import com.ivan_degtev.documentaccounting2.model.Document;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
+import com.ivan_degtev.documentaccounting2.model.interfaces.Available;
 import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.FileRepository;
 import com.ivan_degtev.documentaccounting2.repository.TypeDocumentRepository;
@@ -15,6 +16,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +30,9 @@ public class UserUtils {
     private final TypeDocumentRepository typeDocumentRepository;
     private final DocumentRepository documentRepository;
     private final FileRepository fileRepository;
-//    @Bean
+//    private final ServletWebServerFactoryConfiguration.EmbeddedTomcat embeddedTomcat;
+
+    //    @Bean
     public User getCurrentUser() throws NotAuthenticatedException {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         logger.info("получил аутентификацию = {}", authentication);
@@ -58,27 +63,30 @@ public class UserUtils {
         return entity.getAuthor().getIdUser().equals(currentUser.getIdUser());
     }
 
-    public boolean currentDocumentIsPublicOrAvailable(Long documentId) {
+    public boolean currentDocumentIsPublicOrAvailableForDocuments(Long documentId) {
         User currentUser = getCurrentUser();
         Document currentDocument = documentRepository.findById(documentId)
                 .orElseThrow(() -> new NotFoundException("Document with this id " + documentId + " not found!"));
         logger.info("зашел в проверку доступности документа, текущего юзера и документа нашёл  {}", currentDocument);
-        if (currentDocument.getPublicDocument()) {
-            return true;
-        }
-        return currentDocument.getAvailableFor()
+
+        return currentDocument.getPublicDocument() ||
+                currentDocument.getAvailableFor()
                 .stream()
                 .anyMatch(user -> user.getIdUser().equals(currentUser.getIdUser()));
     }
-    public boolean currentFileEntityIsPublicOrAvailable(Long fileEntityId) {
-        User currentUser = getCurrentUser();
+    public boolean currentFileEntityIsPublicOrAvailableForFileEntity(Long fileEntityId) {
         FileEntity currentFileEntity = fileRepository.findById(fileEntityId)
                 .orElseThrow(() -> new NotFoundException("FileEntity with this id " + fileEntityId + " not found!"));
-        if (currentFileEntity.getPublicEntity()) {
-            return true;
-        }
-        return currentFileEntity.getAvailableFor()
-                .stream()
-                .anyMatch(user -> user.getIdUser().equals(currentUser.getIdUser()));
+        return currentEntityIsPublicOrAvailable(currentFileEntity);
+    }
+    private boolean currentEntityIsPublicOrAvailable(Available entity) {
+        logger.info("зашел в общий метод проверки доступности, сущность:  {}", entity);
+        User currentUser = getCurrentUser();
+        logger.info("зашел в общий метод проверки доступности, текущий юзер:  {}", currentUser);
+        return entity.getPublicEntity() ||
+                entity.getAvailableFor()
+                        .stream()
+                        .anyMatch(user -> user.getIdUser().equals(currentUser.getIdUser()));
+
     }
 }

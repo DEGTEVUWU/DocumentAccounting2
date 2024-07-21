@@ -16,7 +16,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, JpaSp
 
     @Query(value = " SELECT * FROM documents d " +
             " LEFT JOIN document_user_access dua ON d.id = dua.id_document " +
-            " WHERE d.public_document = true " +
+            " WHERE d.public_entity = true " +
             " OR d.author_id_user = :authorId " +
             " OR dua.id_user = :authorId ", nativeQuery = true)
     List<Document> findAllByAuthorIdUserAndPublicDocument(@Param("authorId") Long authorId);

@@ -32,17 +32,17 @@ public class DocumentController {
     @GetMapping(path = "")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<DocumentDTO>> index() {
-        List<DocumentDTO> users = documentService.getAll();
+        List<DocumentDTO> documents = documentService.getAll();
         return ResponseEntity.ok()
-                .body(users);
+                .body(documents);
     }
     @GetMapping(path = "/for_users")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<DocumentDTO>> indexForUsers() {
         Long userId = userUtils.getCurrentUser().getIdUser();
-        List<DocumentDTO> users = documentService.getAllForUsers(userId);
+        List<DocumentDTO> documents = documentService.getAllForUsers(userId);
         return ResponseEntity.ok()
-                .body(users);
+                .body(documents);
     }
     @GetMapping(path = "/search")
     @ResponseStatus(HttpStatus.OK)
@@ -69,7 +69,7 @@ public class DocumentController {
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)" +
-            " or @userUtils.currentDocumentIsPublicOrAvailable(#id)")
+            " or @userUtils.currentDocumentIsPublicOrAvailableForDocuments(#id)")
     public ResponseEntity<DocumentDTO> show(@PathVariable Long id) {
         logger.info("Запрошен документ с ID: {}", id);
         DocumentDTO document = documentService.findById(id);
