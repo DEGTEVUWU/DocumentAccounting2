@@ -50,7 +50,12 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #e9ecef; /* Color row on hover */
 }
-
+.form-actions {
+    display: flex;
+    justify-content: space-between; /* Разделение кнопки и чекбокса */
+    align-items: center;
+    margin-top: 20px;
+}
 /* Style adjustments for form elements if needed */
 .form-group label {
     color: navy;
@@ -124,7 +129,20 @@ tbody tr[data-id]:hover {
     background-color: #777;
 }
 
+.light-green-btn {
+    background-color: lightgreen;
+    color: black;
+    /*padding: 10px 20px;*/
+    /*border: none;*/
+    border-radius: 4px;
+    cursor: pointer;
+    /*margin: 10px 0;*/
+    /*display: block;*/
+}
 
+.light-green-btn:hover {
+    background-color: mediumseagreen;
+}
 
 
 
