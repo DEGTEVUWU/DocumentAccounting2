@@ -48,7 +48,7 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
     /*
-    ручка для проверки во фронте является ли автор текущего документа текущим авторизованным юзером
+    ручки для проверки во фронте является ли автор текущего документа/ файла  текущим авторизованным юзером
      */
     @GetMapping(path = "/check-current-user-is-author/{documentId}")
     public ResponseEntity<Boolean> checkCurrentUserIsAuthor(@PathVariable  Long documentId) {
@@ -56,7 +56,12 @@ public class UserController {
                 " id документа{}", documentId);
         return ResponseEntity.status(HttpStatus.OK).body(userUtils.currentUserIsAuthorForDocuments(documentId));
     }
-
+    @GetMapping(path = "/check-current-user-is-author-for-files/{fileId}")
+    public ResponseEntity<Boolean> checkCurrentUserIsAuthorForFiles(@PathVariable  Long fileId) {
+        logger.info("зашёл в ручку проверки текущего юзера на авторства для показа кнопки удаления ," +
+                " id файла{}", fileId);
+        return ResponseEntity.status(HttpStatus.OK).body(userUtils.currentUserIsAuthorForFiles(fileId));
+    }
 
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)

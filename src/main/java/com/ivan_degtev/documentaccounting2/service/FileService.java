@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.service;
 
+import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import org.springframework.stereotype.Service;
@@ -13,5 +14,7 @@ public interface FileService {
     List<FileEntity> findAll();
     FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException;
     FileEntity getFile(Long id);
+    FileEntityDTO getDataFile(Long id);
     void deleteFile(Long id);
+    byte[] generateThumbnail(byte[] fileData, String fileType);
 }

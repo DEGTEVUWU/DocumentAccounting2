@@ -4,6 +4,7 @@ import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Slf4j
 class DocumentControllerIntegrationTest {
 
     private final Logger logger = LoggerFactory.getLogger(DocumentControllerIntegrationTest.class);
@@ -364,8 +366,9 @@ class DocumentControllerIntegrationTest {
             document1.setContent("content " + i);
             document1.setType(typeDocument1);
             document1.setAuthor(userRepository.findByUsername("admin").get());
-
+            log.info("сделал документ тестовый {}", document1.toString());
             document1.setPublicDocument(i == 0);
+            log.info("добавил в тестовый документ модификатор доступа {}", document1.toString());
 
             logger.info("полностью создал тестовый докумен, его айди{}", document1.getId());
             logger.info("полностью создал тестовый докумен, айди его автора {}", document1.getAuthor().getIdUser());

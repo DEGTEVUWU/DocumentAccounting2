@@ -1,0 +1,158 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f4f8;
+    color: #333;
+}
+
+h1 {
+    color: navy;
+    text-align: center;
+}
+
+button {
+    background-color: navy;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 20px auto; /* Center the button */
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+.light-green-btn {
+    background-color: lightgreen;
+    color: black;
+    /*padding: 10px 20px;*/
+    /*border: none;*/
+    border-radius: 4px;
+    cursor: pointer;
+    /*margin: 10px 0;*/
+    /*display: block;*/
+}
+
+.light-green-btn:hover {
+    background-color: mediumseagreen;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: navy;
+    color: white;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd; /* Add a bottom border to table cells */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color every other row */
+}
+
+tr:hover {
+    background-color: #e9ecef; /* Color row on hover */
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between; /* Разделение кнопок */
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Style adjustments for form elements if needed */
+.form-group label {
+    color: navy;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    border: 1px solid navy;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.container {
+    max-width: 1200px; /* Или любой размер, который вам нравится */
+    margin: auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Добавление тени для лучшего визуального эффекта */
+}
+
+tbody tr[data-id] {
+    cursor: pointer;
+}
+
+tbody tr[data-id]:hover {
+    background-color: #e8f0fe;
+}
+
+#documentsTable td {
+    max-width: 150px; /* Установите максимальную ширину для ячеек таблицы */
+    word-wrap: break-word; /* Разрешить перенос слов в ячейках */
+    vertical-align: top; /* Верхнее выравнивание текста в ячейках */
+}
+
+.content-column {
+    width: 280px; /* Установите конкретную ширину или используйте проценты для более адаптивного решения */
+}
+
+#documentsTable .content-column {
+    max-width: none; /* Убираем ограничение для колонки с контентом */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #555;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination button:disabled {
+    background-color: #888;
+    cursor: default;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #777;
+}
+
+/* Миниатюры */
+#documentsTable .thumbnail-column {
+    text-align: center;
+}
+
+#documentsTable .thumbnail-column img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
