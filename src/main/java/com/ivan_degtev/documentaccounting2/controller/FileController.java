@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,6 +28,12 @@ public class FileController {
     @Autowired
     private FileServiceImpl fileService;
 
+    @GetMapping(path = "")
+    public ResponseEntity<List<FileEntity>> getFiles() {
+        List<FileEntity> fileEntities = fileService.findAll();
+        return ResponseEntity.ok()
+                .body(fileEntities);
+    }
     @PostMapping("/upload")
     public FileEntity uploadFile(
             @RequestParam("file") MultipartFile file,

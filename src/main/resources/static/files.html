@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Документы</title>
+    <link rel="stylesheet" href="css/style_files.css">
+    <script src="js/header.js" defer></script> <!-- Подключаем JS для хедера -->
+    <script src="js/files.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <h1>Список загруженных документов</h1>
+    <div class="form-actions">
+        <button onclick="window.location.href = 'create_document_form.html';">Создать документ</button>
+        <button class="light-green-btn" onclick="window.location.href = 'download_file.html';">Загрузить документ</button>
+    </div>
+    <table id="documentsTable">
+        <thead>
+        <tr>
+            <th>Имя файла</th>
+            <th>Тип</th>
+            <th>Автор</th>
+            <th>Миниатюра</th>
+            <th>Дата создания</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Здесь будут размещены документы -->
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

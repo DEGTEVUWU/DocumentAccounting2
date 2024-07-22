@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public interface FileService {
+    List<FileEntity> findAll();
     FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException;
     FileEntity getFile(Long id);
     void deleteFile(Long id);

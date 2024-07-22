@@ -38,7 +38,7 @@ public class FileEntity implements BaseEntity, Authorable, Available {
     @Lob
     private byte[] data;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonProperty("author")
     @JoinColumn(name = "author_id")
     private User author;

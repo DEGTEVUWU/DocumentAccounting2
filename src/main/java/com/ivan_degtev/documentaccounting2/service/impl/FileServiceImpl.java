@@ -9,22 +9,30 @@ import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.FileService;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class FileServiceImpl implements FileService {
 
     private UserUtils userUtils;
     private FileRepository fileRepository;
     private final UserRepository userRepository;
 
+    @Override
+    public List<FileEntity> findAll() {
+        log.info("зашёл в сервисный метод получить все файлы ");
+        return fileRepository.findAll();
+    }
     @Override
     public FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException {
         FileEntity fileEntity = new FileEntity();
