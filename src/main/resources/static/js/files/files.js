@@ -4,15 +4,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchFiles() {
     try {
-        const response = await fetch('/api/files');
-        if (response.ok) {
-            const files = await response.json();
-            displayFiles(files);
+        const userResponse = await fetch('/api/users/current-user');
+        if (userResponse.ok) {
+            const user = await userResponse.json();
+            const roles = user.roles.map(role => role.name);
+            let endpoint = '/api/files/for_users';
+
+            if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_MODERATOR')) {
+                endpoint = '/api/files';
+            }
+
+            const filesResponse = await fetch(endpoint);
+            if (filesResponse.ok) {
+                const files = await filesResponse.json();
+                displayFiles(files);
+            } else {
+                console.error('Failed to fetch files:', filesResponse.statusText);
+            }
         } else {
-            console.error('Failed to fetch files:', response.statusText);
+            console.error('Failed to fetch user:', userResponse.statusText);
         }
     } catch (error) {
-        console.error('Error fetching files:', error);
+        console.error('Error fetching user or files:', error);
     }
 }
 
@@ -31,15 +44,6 @@ function displayFiles(files) {
 
         const authorTd = document.createElement('td');
         authorTd.textContent = file.author;
-
-        // const thumbnailTd = document.createElement('td');
-        // if (file.filetype.startsWith("image/")) {
-        //     thumbnailTd.innerHTML = `<img src="/api/files/${file.id}/thumbnail" alt="${file.filename}" width="50">`;
-        // } else if (file.filetype === "application/pdf") {
-        //     thumbnailTd.innerHTML = `<embed src="/api/files/${file.id}/thumbnail" type="application/pdf" width="50" height="50">`;
-        // } else {
-        //     thumbnailTd.textContent = 'N/A';
-        // }
 
         const thumbnailTd = document.createElement('td');
         const img = document.createElement('img');
