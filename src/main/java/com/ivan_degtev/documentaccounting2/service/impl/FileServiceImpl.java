@@ -3,6 +3,7 @@ package com.ivan_degtev.documentaccounting2.service.impl;
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
+import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
@@ -47,6 +48,13 @@ public class FileServiceImpl implements FileService {
     private final UserRepository userRepository;
     private final FileEntityMapper fileEntityMapper;
 
+    @Override
+    public List<FileEntityDTO> getAll() {
+        List<FileEntity> fileEntities = fileRepository.findAll();
+        return fileEntities.stream()
+                .map(fileEntityMapper::toFileEntityDTO)
+                .collect(Collectors.toList());
+    }
     @Override
     public List<FileEntity> findAll() {
         log.info("зашёл в сервисный метод получить все файлы ");
@@ -153,6 +161,18 @@ public class FileServiceImpl implements FileService {
     public FileEntity getFile(Long id) {
         return fileRepository.findById(id).orElseThrow(() -> new NotFoundException("File not found with id " + id));
     }
+    @Override
+    public FileEntityDTO update(FileEntityParamsDTO fileEntityUpdateDTO, Long id) {
+        FileEntity fileEntity = fileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotValidException("FileEntity with this id " + id + " not found!"));
+        log.info("нашёл в репозитории нужный файл по айди {}", fileEntity.toString());
+        fileEntityMapper.update(fileEntityUpdateDTO, fileEntity);
+        log.info("замапил изменения из дто в сущность {}", fileEntity.toString());
+        fileRepository.save(fileEntity);
+        log.info("сохранил обновленную сущность в репо");
+        return fileEntityMapper.toFileEntityDTO(fileEntity);
+    }
+
     @Override
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);

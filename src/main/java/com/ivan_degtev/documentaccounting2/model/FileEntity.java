@@ -6,10 +6,7 @@ import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
 import com.ivan_degtev.documentaccounting2.model.interfaces.Available;
 import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,6 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = { "data" })
 public class FileEntity implements BaseEntity, Authorable, Available {
 
     @Id

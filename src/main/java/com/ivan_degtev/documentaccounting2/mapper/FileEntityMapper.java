@@ -4,6 +4,7 @@ import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
@@ -26,6 +27,35 @@ import java.util.stream.Collectors;
 )
 public abstract class FileEntityMapper {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Mapping(source = "author.username", target = "author")
+    @Mapping(source = "availableFor", target = "availableFor", qualifiedByName = "mappingFromEntityToDto")
     public abstract FileEntityDTO toFileEntityDTO(FileEntity file);
+
+    @Mapping(source = "publicEntity", target = "publicEntity")
+    @Mapping(source = "availableFor", target = "availableFor", qualifiedByName = "mappingFromDtoToEntity")
+    public abstract void update(
+            FileEntityParamsDTO fileEntityUpdateDTO,
+            @MappingTarget FileEntity fileEntity
+    );
+
+    @Named("mappingFromEntityToDto")
+    public Set<Long> mappingFromEntityToDto(Set<User> users) {
+        if (users == null || users.isEmpty()) {
+            return new HashSet<>();
+        }
+        return users.stream()
+                .map(User::getIdUser)
+                .collect(Collectors.toSet());
+    }
+
+    @Named("mappingFromDtoToEntity")
+    public Set<User> mappingFromDtoToEntity(Set<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(userRepository.findAllById(userIds));
+    }
 }

@@ -50,7 +50,8 @@ function displayFiles(files) {
         thumbnailTd.appendChild(img);
 
         const dateTd = document.createElement('td');
-        dateTd.textContent = new Date(file.creationDate).toLocaleDateString();
+        // dateTd.textContent = new Date(file.creationDate).toLocaleDateString();
+        dateTd.textContent = file.creationDate;
 
         tr.appendChild(nameTd);
         tr.appendChild(typeTd);

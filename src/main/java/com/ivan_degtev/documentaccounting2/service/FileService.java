@@ -11,10 +11,12 @@ import java.util.List;
 
 @Service
 public interface FileService {
+    List<FileEntityDTO> getAll();
     List<FileEntity> findAll();
     FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException;
     FileEntity getFile(Long id);
     FileEntityDTO getDataFile(Long id);
+    FileEntityDTO update(FileEntityParamsDTO fileEntityUpdateDTO, Long id);
     void deleteFile(Long id);
     byte[] generateThumbnail(byte[] fileData, String fileType);
 }

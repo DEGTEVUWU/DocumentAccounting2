@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать документ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/header.js" defer></script>
+    <script src="js/files/edit-file-form.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <form id="editForm" onsubmit="submitEditForm(event)">
+        <h1>Редактирование доступа к файлу</h1>
+
+        <div class="form-group">
+            <label for="available_for">Сделать файл доступным для:</label>
+            <select id="available_for" name="available_for" multiple class="styled-select">
+                <!-- Динамически заполнится пользователями -->
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <label for="public_document">
+                <input type="checkbox" id="public_document" name="public_document">
+                Сделать файл публичным
+            </label>
+            <button type="submit">Сохранить изменения</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

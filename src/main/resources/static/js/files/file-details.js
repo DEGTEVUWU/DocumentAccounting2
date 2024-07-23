@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     throw new Error('Не удалось удалить файл');
                 }
                 console.log('Файл успешно удалён');
-                window.location.href = '/index.html'; // Переадресация на главную страницу после удаления
+                window.location.href = '/files.html'; // Переадресация на главную страницу после удаления
             })
             .catch((error) => {
                 console.error('Ошибка:', error);
@@ -83,20 +83,28 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(([currentUser, isAuthor]) => {
                 const roles = currentUser.roles.map(role => role.name);
                 console.log('вытащили из документа роли {}', roles);
+
                 if (isAuthor || roles.includes('ROLE_ADMIN')) {
                     deleteButton.style.display = 'block'; // Показываем кнопку удаления
+                    editButton.style.display = 'block';   // Показываем кнопку редактирования
                 } else {
-                    deleteButton.style.display = 'none'; // Скрываем кнопку удаления
+                    deleteButton.style.display = 'none';  // Скрываем кнопку удаления
+                    editButton.style.display = 'none';    // Скрываем кнопку редактирования
                 }
 
                 editButton.onclick = function() {
-                    const editUrl = roles.includes('ROLE_ADMIN') ? `admin_edit_document_form.html?id=${documentId}` : `edit_document_form.html?id=${documentId}`;
-                    window.location.href = editUrl;
+                    if (isAuthor || roles.includes('ROLE_ADMIN')) {
+                        const editUrl = `edit_file_form.html?id=${fileId}`;
+                        window.location.href = editUrl;
+                    } else {
+                        console.error('Нет аутентификации');
+                    }
                 };
             })
             .catch(error => {
                 console.error('Ошибка:', error);
             });
+
     }
 
     deleteButton.onclick = deleteDocument;
