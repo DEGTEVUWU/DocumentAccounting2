@@ -19,7 +19,12 @@ function submitRegisterForm(event) {
         })
         .then(data => {
             console.log('Пользователь успешно зарегистрирован', data);
-            window.location.href = '/index.html';
+            /*
+            логика для добавления данных полей регистрации в сессию для следующего извлечения на других старницах
+             */
+            sessionStorage.setItem('registeredUsername', jsonData.username);
+            sessionStorage.setItem('registeredPassword', jsonData.password);
+            window.location.href = '/login_user.html';
         })
         .catch((error) => {
             console.error('Ошибка:', error);
