@@ -82,29 +82,25 @@ document.addEventListener("DOMContentLoaded", function() {
         Promise.all([getTheRoleOfTheCurrentUser, authorFetch])
             .then(([currentUser, isAuthor]) => {
                 const roles = currentUser.roles.map(role => role.name);
-                console.log('вытащили из документа роли {}', roles);
+                const isAdmin = roles.includes('ROLE_ADMIN');
+                console.log("получил две переменые роли текущего юзера и является ли он автором файла {}", currentUser, isAuthor);
 
-                if (isAuthor || roles.includes('ROLE_ADMIN')) {
+                if (isAuthor || isAdmin) {
                     deleteButton.style.display = 'block'; // Показываем кнопку удаления
                     editButton.style.display = 'block';   // Показываем кнопку редактирования
+
+                    editButton.onclick = function() {
+                        const editUrl = `edit_file_form.html?id=${fileId}`;
+                        window.location.href = editUrl;
+                    };
                 } else {
                     deleteButton.style.display = 'none';  // Скрываем кнопку удаления
                     editButton.style.display = 'none';    // Скрываем кнопку редактирования
                 }
-
-                editButton.onclick = function() {
-                    if (isAuthor || roles.includes('ROLE_ADMIN')) {
-                        const editUrl = `edit_file_form.html?id=${fileId}`;
-                        window.location.href = editUrl;
-                    } else {
-                        console.error('Нет аутентификации');
-                    }
-                };
             })
             .catch(error => {
                 console.error('Ошибка:', error);
             });
-
     }
 
     deleteButton.onclick = deleteDocument;
