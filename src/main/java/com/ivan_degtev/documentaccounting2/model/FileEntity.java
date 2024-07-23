@@ -34,6 +34,7 @@ public class FileEntity implements BaseEntity, Authorable, Available {
     private String filetype;
 
     @Lob
+    @Column(columnDefinition = "BYTEA")
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.EAGER)

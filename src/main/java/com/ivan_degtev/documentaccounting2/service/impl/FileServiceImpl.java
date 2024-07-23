@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
+import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
@@ -55,6 +56,18 @@ public class FileServiceImpl implements FileService {
                 .map(fileEntityMapper::toFileEntityDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<FileEntityDTO> getAllForUsers(Long userId) {
+        log.info("зашёл в метод сервиса для юзеров, айди {}", userId);
+        List<FileEntity> fileEntities = fileRepository.findAllByAuthorIdUserAndPublicFile(userId);
+        log.info("получил данные из репозитория, первый файл из них {}", fileEntities.get(0).toString());
+        List<FileEntityDTO> resultList = fileEntities.stream()
+                .map(fileEntityMapper::toFileEntityDTO)
+                .toList();
+        return resultList;
+    }
+
     @Override
     public List<FileEntity> findAll() {
         log.info("зашёл в сервисный метод получить все файлы ");

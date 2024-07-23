@@ -6,6 +6,7 @@ import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.service.impl.FileServiceImpl;
+import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class FileController {
 
     private FileServiceImpl fileService;
     private FileEntityMapper fileEntityMapper;
+    private UserUtils userUtils;
 //    @GetMapping(path = "")
 //    public ResponseEntity<List<FileEntity>> getFiles() {
 //        List<FileEntity> fileEntities = fileService.findAll();
@@ -41,25 +43,21 @@ public class FileController {
 
     @GetMapping(path = "")
     public ResponseEntity<List<FileEntityDTO>> getAllFiles() {
-//        List<FileEntity> files = fileService.findAll();
-//        return files.stream()
-//                .map(file -> new FileEntityDTO(
-//                        file.getId(),
-//                        file.getFilename(),
-//                        file.getFiletype(),
-//                        file.getAuthor().getUsername(),
-//                        file.getData(),
-//                        file.getPublicEntity(),
-//                        file.getAvailableFor(),
-//                        file.getCreationDate(),
-//                        file.getUpdateDate()
-//                ))
-//                .collect(Collectors.toList());
         List<FileEntityDTO> fileEntityDTOS =  fileService.getAll();
         return ResponseEntity.ok().body(fileEntityDTOS);
     }
 
-    // делает миниатюру файла, используется на страницах с инфой о файле и на общей странице
+    @GetMapping(path = "for_users")
+    public ResponseEntity<List<FileEntityDTO>> getAllFilesForUsers() {
+        Long userId = userUtils.getCurrentUser().getIdUser();
+        List<FileEntityDTO> fileEntityDTOS = fileService.getAllForUsers(userId);
+        return ResponseEntity.ok().body(fileEntityDTOS);
+    }
+
+    /*
+     делает миниатюру файла,
+     используется на страницах с инфой о файле и на общей странице
+     */
     @GetMapping(path = "/{id}/thumbnail")
     public ResponseEntity<byte[]> getFileThumbnail(@PathVariable Long id) {
         FileEntity fileEntity = fileService.getFile(id);
