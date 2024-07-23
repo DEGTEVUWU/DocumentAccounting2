@@ -1,8 +1,7 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
-import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
-import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
@@ -28,16 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.imageio.ImageIO;
-import org.springframework.stereotype.Service;
-import org.springframework.util.MimeTypeUtils;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 @Service
 @AllArgsConstructor
@@ -68,11 +59,11 @@ public class FileServiceImpl implements FileService {
         return resultList;
     }
 
-    @Override
-    public List<FileEntity> findAll() {
-        log.info("зашёл в сервисный метод получить все файлы ");
-        return fileRepository.findAll();
-    }
+//    @Override
+//    public List<FileEntity> findAll() {
+//        log.info("зашёл в сервисный метод получить все файлы ");
+//        return fileRepository.findAll();
+//    }
 
     @Override
     public FileEntityDTO getDataFile(Long id) {
@@ -146,7 +137,7 @@ public class FileServiceImpl implements FileService {
 //    }
 
     @Override
-    public FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException {
+    public FileEntity storeFile(MultipartFile file, FileEntityUpdateDTO paramsDTO) throws IOException {
         FileEntity fileEntity = new FileEntity();
         fileEntity.setFilename(file.getOriginalFilename());
         fileEntity.setFiletype(file.getContentType());
@@ -175,7 +166,7 @@ public class FileServiceImpl implements FileService {
         return fileRepository.findById(id).orElseThrow(() -> new NotFoundException("File not found with id " + id));
     }
     @Override
-    public FileEntityDTO update(FileEntityParamsDTO fileEntityUpdateDTO, Long id) {
+    public FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("FileEntity with this id " + id + " not found!"));
         log.info("нашёл в репозитории нужный файл по айди {}", fileEntity.toString());

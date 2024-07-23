@@ -77,22 +77,37 @@ document.addEventListener("DOMContentLoaded", function() {
         Promise.all([getTheRoleOfTheCurrentUser, authorFetch])
             .then(([currentUser, isAuthor]) => {
                 const roles = currentUser.roles.map(role => role.name);
-                console.log('вытащили из документа роли {}', roles);
-                if (isAuthor || roles.includes('ROLE_ADMIN')) {
+                const isAdmin = roles.includes('ROLE_ADMIN');
+                console.log("получил две переменые роли текущего юзера и является ли он автором документа {}"
+                    , currentUser, isAuthor);
+
+                if (isAuthor || isAdmin) {
                     deleteButton.style.display = 'block'; // Показываем кнопку удаления
-                } else {
-                    deleteButton.style.display = 'none'; // Скрываем кнопку удаления
-                }
+                    editButton.style.display = 'block';   // Показываем кнопку редактирования
+
 
                 editButton.onclick = function() {
-                    const editUrl = roles.includes('ROLE_ADMIN') ? `admin_edit_document_form.html?id=${documentId}` : `edit_document_form.html?id=${documentId}`;
+                    const editUrl = roles.includes('ROLE_ADMIN')
+                        ? `admin_edit_document_form.html?id=${documentId}`
+                        : `edit_document_form.html?id=${documentId}`;
                     window.location.href = editUrl;
                 };
+                } else {
+                    deleteButton.style.display = 'none';  // Скрываем кнопку удаления
+                    editButton.style.display = 'none';    // Скрываем кнопку редактирования
+                }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
             });
     }
+
+
+
+
+
+
+
 
     deleteButton.onclick = deleteDocument;
 

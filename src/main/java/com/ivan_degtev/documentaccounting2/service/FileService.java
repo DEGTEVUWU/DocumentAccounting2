@@ -1,7 +1,7 @@
 package com.ivan_degtev.documentaccounting2.service;
 
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
-import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,11 +13,11 @@ import java.util.List;
 public interface FileService {
     List<FileEntityDTO> getAll();
     List<FileEntityDTO> getAllForUsers(Long userId);
-    List<FileEntity> findAll();
-    FileEntity storeFile(MultipartFile file, FileEntityParamsDTO paramsDTO) throws IOException;
+//    List<FileEntity> findAll();
+    FileEntity storeFile(MultipartFile file, FileEntityUpdateDTO paramsDTO) throws IOException;
     FileEntity getFile(Long id);
     FileEntityDTO getDataFile(Long id);
-    FileEntityDTO update(FileEntityParamsDTO fileEntityUpdateDTO, Long id);
+    FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id);
     void deleteFile(Long id);
     byte[] generateThumbnail(byte[] fileData, String fileType);
 }

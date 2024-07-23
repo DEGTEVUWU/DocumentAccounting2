@@ -2,14 +2,13 @@ package com.ivan_degtev.documentaccounting2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
-import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.service.impl.FileServiceImpl;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -77,7 +75,7 @@ public class FileController {
     ) throws IOException
     {
         ObjectMapper objectMapper = new ObjectMapper();
-        FileEntityParamsDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityParamsDTO.class);
+        FileEntityUpdateDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityUpdateDTO.class);
 
         log.info("получили файл с параметрами {}", file.getOriginalFilename());
         log.info("получили дто с  параметрами {}", paramsDTO.toString());
@@ -123,7 +121,7 @@ public class FileController {
     @PutMapping(path = "{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForFiles(#id)")
     public ResponseEntity<FileEntityDTO> updateFile(
-            @RequestBody FileEntityParamsDTO fileEntityUpdateDTO,
+            @RequestBody FileEntityUpdateDTO fileEntityUpdateDTO,
             @PathVariable Long id
     ) {
         log.info("получил с фронта дто с изменениями {}", fileEntityUpdateDTO.toString());
