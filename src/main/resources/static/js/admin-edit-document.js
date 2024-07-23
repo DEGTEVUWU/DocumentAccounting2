@@ -58,7 +58,7 @@ function submitEditForm(event) {
         })
         .then(data => {
             console.log('Документ успешно изменен', data);
-            window.location.href = '/index.html'; // Переадресация на главную страницу после добавления
+            window.location.href = `document_details.html?id=${documentId}`;
         })
         .catch((error) => {
             console.error('Ошибка:', error);

@@ -52,7 +52,7 @@ function submitEditForm(event) {
         })
         .then(data => {
             console.log('Доступ к файлу успешно изменен', data);
-            window.location.href = '/files.html'; // Переадресация на главную страницу после добавления
+            window.location.href = `file_details.html?id=${fileId}`;
         })
         .catch((error) => {
             console.error('Ошибка:', error);

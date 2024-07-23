@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function() {
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_MODERATOR')) {
                 endpoint = '/api/documents';
             }
-
             return fetch(endpoint);
         })
         .then(response => response.json())

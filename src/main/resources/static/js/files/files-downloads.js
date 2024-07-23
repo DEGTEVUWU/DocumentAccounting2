@@ -17,16 +17,22 @@ async function uploadFile(event) {
     formData.append('file', file);
     formData.append('params', JSON.stringify(params));
 
-    const response = await fetch('/api/files/upload', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const response = await fetch('/api/files/upload', {
+            method: 'POST',
+            body: formData
+        });
 
-    if (response.ok) {
-        const result = await response.json();
-        alert('File uploaded successfully: ' + result.id);
-    } else {
-        alert('File upload failed.');
+        if (response.ok) {
+            const result = await response.json();
+            alert('File uploaded successfully: ' + result.id);
+            console.log('Доступ к файлу успешно изменен', result);
+            window.location.href = `files.html`;
+        } else {
+            alert('File upload failed.');
+        }
+    } catch (error) {
+        console.error('Ошибка при загрузке файла:', error);
     }
 }
 
