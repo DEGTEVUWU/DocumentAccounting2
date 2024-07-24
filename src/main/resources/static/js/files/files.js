@@ -54,19 +54,36 @@ function displayFiles(files) {
         thumbnailTd.appendChild(img);
 
         const dateTd = document.createElement('td');
-        // dateTd.textContent = new Date(file.creationDate).toLocaleDateString();
         dateTd.textContent = file.creationDate;
+
+        const viewTd = document.createElement('td');
+        const viewBtn = document.createElement('button');
+        viewBtn.innerHTML = '&#128065;'; // Eye icon for view
+        viewBtn.onclick = () => viewFile(file.id);
+        viewTd.appendChild(viewBtn);
+
+        const downloadTd = document.createElement('td');
+        const downloadBtn = document.createElement('button');
+        downloadBtn.innerHTML = '&#128190;'; // Floppy disk icon for download
+        downloadBtn.onclick = () => downloadFile(file.id);
+        downloadTd.appendChild(downloadBtn);
 
         tr.appendChild(nameTd);
         tr.appendChild(typeTd);
         tr.appendChild(authorTd);
         tr.appendChild(thumbnailTd);
         tr.appendChild(dateTd);
-
-        tr.addEventListener('click', function() {
-            window.location.href = `file_details.html?id=${file.id}`;
-        });
+        tr.appendChild(viewTd);
+        tr.appendChild(downloadTd);
 
         tbody.appendChild(tr);
     });
+}
+
+function viewFile(fileId) {
+    window.open(`/api/files/${fileId}?download=false`, '_blank');
+}
+
+function downloadFile(fileId) {
+    window.open(`/api/files/${fileId}?download=true`, '_blank');
 }
