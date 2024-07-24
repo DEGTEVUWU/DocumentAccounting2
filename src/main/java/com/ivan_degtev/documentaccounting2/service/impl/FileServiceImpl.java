@@ -1,6 +1,7 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
-import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
@@ -16,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,6 +69,51 @@ public class FileServiceImpl implements FileService {
 //        log.info("зашёл в сервисный метод получить все файлы ");
 //        return fileRepository.findAll();
 //    }
+
+    @Override
+    public Page<FileEntityDTO> searchFiles(
+            FileEntityParamsDTO params,
+            int pageNumber,
+            String sortBy,
+            String sortDirection
+    )
+    {
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.valueOf(sortDirection.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            direction = Sort.Direction.ASC;
+        }
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(pageNumber - 1, 10, sort);
+        Long userId = userUtils.getCurrentUser().getIdUser();
+
+        log.info("Parameters - fileNameCont: {}, " +
+                        "authorCont: {}, " +
+                        "fileTypeCont: {}, " +
+                        "creationDate: {}, " +
+                        "userId: {}, " +
+                        "sortBy: {}, " +
+                        "sortDirection: {}",
+                params.getFileNameCont(),
+                params.getAuthorCont(),
+                params.getFileTypeCont(),
+                params.getCreationDate(),
+                userId,
+                sortBy, sortDirection
+        );
+
+        Page<FileEntity> files = fileRepository.searchFiles(
+                params.getFileNameCont(),
+                params.getAuthorCont(),
+                params.getFileTypeCont(),
+                params.getCreationDate(),
+                userId,
+                pageable
+        );
+        return files.map(fileEntityMapper::toFileEntityDTO);
+    }
+
 
     @Override
     public FileEntityDTO getDataFile(Long id) {

@@ -22,7 +22,7 @@ public class DocumentParamsDTO {
     private String contentCont;
     private String typeCont;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd") // Указываем формат даты
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
 
     private Boolean publicDocument = true;

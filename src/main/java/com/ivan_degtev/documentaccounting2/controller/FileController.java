@@ -1,7 +1,10 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ivan_degtev.documentaccounting2.dto.file.FileEntityDTO;
+import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
+import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
+import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
@@ -9,7 +12,9 @@ import com.ivan_degtev.documentaccounting2.service.impl.FileServiceImpl;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,6 +55,22 @@ public class FileController {
         Long userId = userUtils.getCurrentUser().getIdUser();
         List<FileEntityDTO> fileEntityDTOS = fileService.getAllForUsers(userId);
         return ResponseEntity.ok().body(fileEntityDTOS);
+    }
+
+    @GetMapping(path = "/search")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Page<FileEntityDTO>> search(
+            @ModelAttribute FileEntityParamsDTO fileEntityParamsDTO,
+            @RequestParam(defaultValue = "1") int pageNumber,
+            @RequestParam(defaultValue = "filename") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ) {
+        log.info("зашел в контроллер на серч, имею дто из запрос {}", fileEntityParamsDTO.toString());
+        log.info("номер страницы {}", pageNumber);
+        Page<FileEntityDTO> fileEntityDTOS = fileService.searchFiles(fileEntityParamsDTO, pageNumber, sortBy, sortDirection);
+        log.info("получил из сервиса готовую страницу");
+        return ResponseEntity.ok()
+                .body(fileEntityDTOS);
     }
 
     /*
