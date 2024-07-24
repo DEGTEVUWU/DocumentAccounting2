@@ -20,6 +20,6 @@ public class FileEntityParamsDTO {
     private Boolean publicDocument = true;
 
     // Для сортировки
-    private String sortBy; // поле, по которому нужно сортировать ('title', 'author', ...)
-    private String sortDirection; // направление ('asc' или 'desc')
+    private String sortBy = "filename"; // поле, по которому нужно сортировать ('title', 'author', ...)
+    private String sortDirection = "ASC"; // направление ('asc' или 'desc')
 }

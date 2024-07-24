@@ -18,9 +18,7 @@ public interface FileService {
 //    List<FileEntity> findAll();
     Page<FileEntityDTO> searchFiles(
             FileEntityParamsDTO params,
-            int pageNumber,
-            String sortBy,
-            String sortDirection
+            int pageNumber
     );
     FileEntity storeFile(MultipartFile file, FileEntityUpdateDTO paramsDTO) throws IOException;
     FileEntity getFile(Long id);

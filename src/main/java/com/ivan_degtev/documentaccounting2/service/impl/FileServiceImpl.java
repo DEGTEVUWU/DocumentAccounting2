@@ -71,37 +71,20 @@ public class FileServiceImpl implements FileService {
 //    }
 
     @Override
-    public Page<FileEntityDTO> searchFiles(
-            FileEntityParamsDTO params,
-            int pageNumber,
-            String sortBy,
-            String sortDirection
-    )
-    {
-        Sort.Direction direction;
-        try {
-            direction = Sort.Direction.valueOf(sortDirection.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            direction = Sort.Direction.ASC;
-        }
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(pageNumber - 1, 10, sort);
+    public Page<FileEntityDTO> searchFiles(FileEntityParamsDTO params, int pageNumber) {
         Long userId = userUtils.getCurrentUser().getIdUser();
+        String sortBy = params.getSortBy();
+        String sortDirection = params.getSortDirection();
 
-        log.info("Parameters - fileNameCont: {}, " +
-                        "authorCont: {}, " +
-                        "fileTypeCont: {}, " +
-                        "creationDate: {}, " +
-                        "userId: {}, " +
-                        "sortBy: {}, " +
-                        "sortDirection: {}",
-                params.getFileNameCont(),
-                params.getAuthorCont(),
-                params.getFileTypeCont(),
-                params.getCreationDate(),
-                userId,
-                sortBy, sortDirection
-        );
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "filename";
+        }
+        if (sortDirection == null || sortDirection.isEmpty()) {
+            sortDirection = "asc";
+        }
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable pageable = PageRequest.of(pageNumber - 1, 10, sort);
 
         Page<FileEntity> files = fileRepository.searchFiles(
                 params.getFileNameCont(),
@@ -109,8 +92,8 @@ public class FileServiceImpl implements FileService {
                 params.getFileTypeCont(),
                 params.getCreationDate(),
                 userId,
-                pageable
-        );
+                pageable);
+
         return files.map(fileEntityMapper::toFileEntityDTO);
     }
 

@@ -61,13 +61,13 @@ public class FileController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<FileEntityDTO>> search(
             @ModelAttribute FileEntityParamsDTO fileEntityParamsDTO,
-            @RequestParam(defaultValue = "1") int pageNumber,
-            @RequestParam(defaultValue = "filename") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection
+            @RequestParam(defaultValue = "1") int pageNumber
+//            @RequestParam(defaultValue = "filename") String sortBy,
+//            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
         log.info("зашел в контроллер на серч, имею дто из запрос {}", fileEntityParamsDTO.toString());
         log.info("номер страницы {}", pageNumber);
-        Page<FileEntityDTO> fileEntityDTOS = fileService.searchFiles(fileEntityParamsDTO, pageNumber, sortBy, sortDirection);
+        Page<FileEntityDTO> fileEntityDTOS = fileService.searchFiles(fileEntityParamsDTO, pageNumber);
         log.info("получил из сервиса готовую страницу");
         return ResponseEntity.ok()
                 .body(fileEntityDTOS);
