@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -67,6 +69,7 @@ public class FileController {
     ) {
         log.info("зашел в контроллер на серч, имею дто из запрос {}", fileEntityParamsDTO.toString());
         log.info("номер страницы {}", pageNumber);
+
         Page<FileEntityDTO> fileEntityDTOS = fileService.searchFiles(fileEntityParamsDTO, pageNumber);
         log.info("получил из сервиса готовую страницу");
         return ResponseEntity.ok()

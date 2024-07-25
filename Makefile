@@ -30,4 +30,14 @@ start:
 run:
 	sudo docker-compose up --build -d
 
+run-f:
+	sudo docker-compose up -d
+
+down:
+	sudo docker-compose down
+
+log:
+	sudo docker-compose logs
+
+
 .PHONY: build

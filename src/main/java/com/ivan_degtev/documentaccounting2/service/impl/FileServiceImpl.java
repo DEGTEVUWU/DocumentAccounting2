@@ -90,7 +90,7 @@ public class FileServiceImpl implements FileService {
                 params.getFileNameCont(),
                 params.getAuthorCont(),
                 params.getFileTypeCont(),
-                params.getCreationDate(),
+                params.getCreationDate() != null ? params.getCreationDate().toString() : null, // Преобразование даты в строку
                 userId,
                 pageable);
 
@@ -183,6 +183,7 @@ public class FileServiceImpl implements FileService {
         if (paramsDTO != null && paramsDTO.getAvailableFor() != null && !paramsDTO.getAvailableFor().isEmpty()) {
             fileEntity.setAvailableFor(mappingFromDtoToEntity(paramsDTO.getAvailableFor()));
         }
+        log.info("сейчас в сущности файла есть поле с данными файла типа {}", fileEntity.getData().getClass().getSimpleName());
         return fileRepository.save(fileEntity);
     }
     private Set<User> mappingFromDtoToEntity(Set<Long> userIds) {

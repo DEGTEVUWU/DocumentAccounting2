@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
             document.body.insertAdjacentHTML('beforeend', data);
             updateAuthButton();
             updateProfileButton(); // Обновление кнопки профиля
+            adjustSearchButtonBehavior();
         })
         .catch(error => console.error('Ошибка загрузки хедера:', error));
 });
@@ -79,12 +80,28 @@ function handleAuthButtonClick() {
 }
 
 //сайд бар по поиску
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
+// function toggleSidebar() {
+//     const sidebar = document.getElementById('sidebar');
+//     if (sidebar.style.width === '300px') {
+//         sidebar.style.width = '0';
+//     } else {
+//         sidebar.style.width = '300px';
+//     }
+// }
+function toggleSidebar(sidebarId) {
+    const sidebar = document.getElementById(sidebarId);
     if (sidebar.style.width === '300px') {
         sidebar.style.width = '0';
     } else {
         sidebar.style.width = '300px';
+    }
+}
+function adjustSearchButtonBehavior() {
+    const searchButton = document.getElementById('searchButton');
+    if (window.location.pathname.includes('/html/files/files.html')) {
+        searchButton.setAttribute('onclick', "toggleSidebar('sidebarForFiles');");
+    } else {
+        searchButton.setAttribute('onclick', "toggleSidebar('sidebar');");
     }
 }
 
@@ -99,21 +116,33 @@ function submitSearchForm(event) {
 
     // Перенаправление на страницу результатов поиска
     window.location.href = 'search_documents.html';
+}
 
-    // fetch(`/api/documents/search?${params}`, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-    //     }
-    // })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         console.log("data - ", data);
-    //         // displaySearchResults(data);
-    //         localStorage.setItem('searchResults', JSON.stringify(data)); // Сохранение результатов поиска
-    //         window.location.href = 'search_documents.html'; // Перенаправление на страницу результатов поиска
-    //     })
-    //     .catch(error => console.error('Ошибка поиска документов:', error));
+// function submitSearchFormForFiles(event) {
+//     event.preventDefault();
+//     const form = document.getElementById('searchFormForFiles');
+//     const formDataForFiles = new FormData(form);
+//     const paramsForSearchFiles = new URLSearchParams(formDataForFiles).toString();
+//     console.log("params - ", paramsForSearchFiles);
+//     localStorage.setItem('paramsForSearchFiles', paramsForSearchFiles);
+//     window.location.href = '/html/files/search_files.html';
+// }
+function submitSearchFormForFiles(event) {
+    event.preventDefault();
+    const form = document.getElementById('searchFormForFiles');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+    localStorage.setItem('searchParams', params);
+    window.location.href = 'search_files.html';
+}
+
+function adjustSearchButtonBehavior() {
+    const searchButton = document.getElementById('searchButton');
+    if (window.location.pathname.includes('files.html')) {
+        searchButton.setAttribute('onclick', "toggleSidebar('sidebarForFiles');");
+    } else {
+        searchButton.setAttribute('onclick', "toggleSidebar('sidebar');");
+    }
 }
 
 function displaySearchResults(data) {

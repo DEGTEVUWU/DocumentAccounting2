@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Найденные файлы</title>
+    <link rel="stylesheet" href="css/style_index.css">
+    <script src="js/header.js" defer></script>
+    <script src="js/files/search-files.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <h1>Список файлов</h1>
+
+    <div class="form-actions">
+        <button onclick="window.location.href = 'create_document_form.html';">Создать документ</button>
+        <button class="light-green-btn" onclick="window.location.href = 'download_file.html';">Загрузить файл</button>
+    </div>
+
+    <table id="filesTable">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Тип</th>
+            <th>Дата создания</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Здесь будут размещены документы -->
+        </tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+</div>
+</body>
+</html>

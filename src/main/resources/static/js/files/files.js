@@ -34,7 +34,12 @@ function displayFiles(files) {
     tbody.innerHTML = ''; // Clear existing rows
 
     files.forEach(file => {
+
         const tr = document.createElement('tr');
+        // Добавляем обработчик клика на строку
+        tr.addEventListener('click', () => {
+            window.location.href = `file_details.html?id=${file.id}`;
+        });
 
         const nameTd = document.createElement('td');
         nameTd.textContent = file.filename;
