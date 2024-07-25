@@ -39,5 +39,7 @@ down:
 log:
 	sudo docker-compose logs
 
+status:
+	sudo docker-compose ps -a
 
 .PHONY: build
