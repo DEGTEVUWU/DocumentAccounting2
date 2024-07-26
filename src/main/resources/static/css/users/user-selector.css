@@ -1,0 +1,49 @@
+/* user-selector.css */
+
+.user-selector {
+    margin-bottom: 15px; /* Отступ снизу блока */
+}
+
+.user-selector label {
+    display: block;
+    margin-bottom: 5px;
+    color: navy;
+}
+
+.user-selector select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.user-selector select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background-color: #fff;
+}
+
+.user-selector select option {
+    padding: 10px;
+}
+
+/* Стили для отображения выпадающего списка */
+.user-selector select {
+    height: auto; /* Высота поля по умолчанию */
+    min-height: 40px; /* Минимальная высота поля */
+    max-height: 200px; /* Максимальная высота с полосой прокрутки */
+    overflow-y: auto; /* Добавляем прокрутку по вертикали */
+}
+
+/* Стили для надписи по умолчанию */
+.user-selector select::placeholder {
+    color: #999;
+    font-style: italic;
+}

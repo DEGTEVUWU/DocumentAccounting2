@@ -90,6 +90,7 @@ function handleAuthButtonClick() {
 // }
 function toggleSidebar(sidebarId) {
     const sidebar = document.getElementById(sidebarId);
+
     if (sidebar.style.width === '300px') {
         sidebar.style.width = '0';
     } else {

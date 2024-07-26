@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #666;
+}
+
+strong {
+    color: #333;
+}
+
+#docContent {
+    white-space: pre-wrap; /* Сохраняет отступы и переносы строк */
+    word-wrap: break-word; /* Разрешить перенос слов */
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+button {
+    background-color: navy;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    /* Убираем стандартные маржины и выравниваем кнопку слева */
+    margin: 0;
+}
+
+/* Новый стиль для контейнера кнопок */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.delete-button {
+    background-color: #ac0505;
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Документы</title>
-    <link rel="stylesheet" href="../../css/header_style.css">
-    <link rel="stylesheet" href="../../css/sidebar_style.css">
+    <link rel="stylesheet" href="../../css/elements/header_style.css">
+    <link rel="stylesheet" href="../../css/elements/sidebar_style.css">
     <script src="js/elements/header.js" defer></script>
 </head>
 <body>
@@ -26,7 +26,7 @@
 
 <!--сайд-баз для поиска документов-->
 <div id="sidebar" class="sidebar">
-    <span class="closebtn" onclick="toggleSidebar()">×</span> <!-- Значок закрытия -->
+    <span class="closebtn" onclick="toggleSidebar('sidebar')">×</span> <!-- Значок закрытия -->
     <form id="searchForm" onsubmit="submitSearchForm(event)">
         <h2>Поиск документов</h2>
         <label for="titleCont">Название:</label>
@@ -70,7 +70,7 @@
 
 <!--функция для сайд-бара для файлов-->
 <div id="sidebarForFiles" class="sidebar">
-    <span class="closebtn" onclick="toggleSidebar()">×</span> <!-- Значок закрытия -->
+    <span class="closebtn" onclick="toggleSidebar('sidebarForFiles')">×</span> <!-- Значок закрытия -->
     <form id="searchFormForFiles" onsubmit="submitSearchFormForFiles(event)">
         <h2>Поиск файлов</h2>
         <label for="fileNameCont">Название:</label>
