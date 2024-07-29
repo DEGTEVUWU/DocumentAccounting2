@@ -21,6 +21,17 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres:5432/document_accounting_db"
             - name: SPRING_DATASOURCE_USERNAME
-              value: "ivan"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
             - name: SPRING_DATASOURCE_PASSWORD
-              value: "password"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+
+#            - name: SPRING_DATASOURCE_USERNAME
+#              value: "ivan"
+#            - name: SPRING_DATASOURCE_PASSWORD
+#              value: "password"
