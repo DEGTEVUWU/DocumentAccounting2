@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public interface FileService {
-    public List<FileEntityDTO> getAll();
+    List<FileEntityDTO> getAll();
     List<FileEntityDTO> getAllForUsers();
     Page<FileEntityDTO> searchFiles(
             FileEntityParamsDTO params,

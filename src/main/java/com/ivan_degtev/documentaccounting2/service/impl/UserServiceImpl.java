@@ -11,59 +11,72 @@ import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.core.Authentication;
+
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    @Override
     public List<UserDTO> getAll() {
         var users = userRepository.findAll();
-        List<UserDTO> result = users.stream()
+        return users.stream()
                 .map(userMapper::toDTO)
                 .toList();
-        return result;
     }
 
+    @Override
+    public UserDTO getCurrentUser(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = findByUsername(userDetails.getUsername());
+        return userMapper.toDTO(user);
+    }
 
+    @Override
     public UserDTO findById(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
-        var userDTO = userMapper.toDTO(user);
-        return userDTO;
+        return userMapper.toDTO(user);
     }
 
+    @Override
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
     public UserDTO updateForUser(UpdateUserDTOForUser userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
         userMapper.updateForUser(userData, user);
         userRepository.save(user);
-        var userDTO = userMapper.toDTO(user);
-        return userDTO;
+        return userMapper.toDTO(user);
     }
+
+    @Override
+    @Transactional
     public UserDTO updateForAdmin(UpdateUserDTOForAdmin userData, Long id) {
-        logger.info("зашёл в метод изменения юзера для админа");
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
-        logger.info("нашёл юзера из БД");
         userMapper.updateForAdmin(userData, user);
-        logger.info("замапил апдет юзер");
         userRepository.save(user);
-        logger.info("сохранил в БД обновленного юзера {}", user);
-        var userDTO = userMapper.toDTO(user);
-        return userDTO;
+        return userMapper.toDTO(user);
     }
+
+    @Override
     @Transactional
     public UserDTO updateUserWithNotFullField(UpdateUserDTOForUser userData, Long id) {
         User user = userRepository.findById(id)
@@ -84,23 +97,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userMapper.toDTO(user);
     }
 
+    @Override
+    @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found"));
-    }
-
-    @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
+    @Transactional
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
