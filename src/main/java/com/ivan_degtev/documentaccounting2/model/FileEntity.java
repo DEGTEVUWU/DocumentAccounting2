@@ -33,7 +33,7 @@ public class FileEntity implements BaseEntity, Authorable, Available {
     private String filename;
     private String filetype;
 
-//    @Lob
+    @Lob
     @Column(columnDefinition = "BYTEA")
     private byte[] data;
 

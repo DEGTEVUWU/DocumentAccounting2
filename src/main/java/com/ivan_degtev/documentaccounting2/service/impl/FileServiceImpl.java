@@ -64,6 +64,7 @@ public class FileServiceImpl implements FileService {
         return resultList;
     }
 
+
 //    @Override
 //    public List<FileEntity> findAll() {
 //        log.info("зашёл в сервисный метод получить все файлы ");
