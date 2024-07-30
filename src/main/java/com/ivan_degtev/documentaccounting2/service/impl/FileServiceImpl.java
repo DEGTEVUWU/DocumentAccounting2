@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -105,6 +108,14 @@ public class FileServiceImpl implements FileService {
         fileEntityMapper.toFileEntityDTO(fileEntity);
         return fileEntityMapper.toFileEntityDTO(fileEntity);
     }
+
+    @Override
+    public byte[] getThumbnailFile(Long id) {
+        FileEntity fileEntity = getFile(id);
+        return generateThumbnail(fileEntity.getData(), fileEntity.getFiletype());
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
+    }
     @Override
     public byte[] generateThumbnail(byte[] fileData, String fileType) {
         try {
@@ -142,35 +153,11 @@ public class FileServiceImpl implements FileService {
         return baos.toByteArray();
     }
 
-//    @Override
-//    public byte[] generateThumbnail(byte[] fileData, String fileType) {
-//        try {
-//            if (fileType.startsWith("image/")) {
-//                ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
-//                BufferedImage originalImage = ImageIO.read(bais);
-//                int width = originalImage.getWidth() / 4;
-//                int height = originalImage.getHeight() / 4;
-//                Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-//                BufferedImage thumbnail = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//                Graphics2D g2d = thumbnail.createGraphics();
-//                g2d.drawImage(scaledImage, 0, 0, null);
-//                g2d.dispose();
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                ImageIO.write(thumbnail, fileType.split("/")[1], baos);
-//                return baos.toByteArray();
-//            } else if (fileType.equals(MimeTypeUtils.APPLICATION_PDF_VALUE)) {
-//                // Логика для генерации миниатюры PDF
-//                // Возвращаем оригинальные данные для простоты
-//                return fileData;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return new byte[0];
-//    }
-
     @Override
-    public FileEntity storeFile(MultipartFile file, FileEntityUpdateDTO paramsDTO) throws IOException {
+    public FileEntity storeFile(MultipartFile file, String paramsJson) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        FileEntityUpdateDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityUpdateDTO.class);
+
         FileEntity fileEntity = new FileEntity();
         fileEntity.setFilename(file.getOriginalFilename());
         fileEntity.setFiletype(file.getContentType());
@@ -183,9 +170,10 @@ public class FileServiceImpl implements FileService {
         if (paramsDTO != null && paramsDTO.getAvailableFor() != null && !paramsDTO.getAvailableFor().isEmpty()) {
             fileEntity.setAvailableFor(mappingFromDtoToEntity(paramsDTO.getAvailableFor()));
         }
-        log.info("сейчас в сущности файла есть поле с данными файла типа {}", fileEntity.getData().getClass().getSimpleName());
+
         return fileRepository.save(fileEntity);
     }
+
     private Set<User> mappingFromDtoToEntity(Set<Long> userIds) {
         if (userIds == null || userIds.isEmpty()) {
             return new HashSet<>();

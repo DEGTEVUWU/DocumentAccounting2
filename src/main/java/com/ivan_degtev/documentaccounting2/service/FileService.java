@@ -13,16 +13,17 @@ import java.util.List;
 
 @Service
 public interface FileService {
-    List<FileEntityDTO> getAll();
+    public List<FileEntityDTO> getAll();
     List<FileEntityDTO> getAllForUsers();
     Page<FileEntityDTO> searchFiles(
             FileEntityParamsDTO params,
             int pageNumber
     );
-    FileEntity storeFile(MultipartFile file, FileEntityUpdateDTO paramsDTO) throws IOException;
+    FileEntity storeFile(MultipartFile file, String paramsJson) throws IOException;
     FileEntity getFile(Long id);
     FileEntityDTO getDataFile(Long id);
     FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id);
     void deleteFile(Long id);
+    byte[] getThumbnailFile(Long id);
     byte[] generateThumbnail(byte[] fileData, String fileType);
 }

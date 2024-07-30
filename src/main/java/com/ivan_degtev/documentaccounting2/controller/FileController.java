@@ -1,19 +1,16 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
-import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.service.impl.FileServiceImpl;
-import com.ivan_degtev.documentaccounting2.utils.UserUtils;
+import com.ivan_degtev.documentaccounting2.service.other.HeaderConfig;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +27,9 @@ import java.util.List;
 @AllArgsConstructor
 public class FileController {
 
-    private FileServiceImpl fileService;
-    private UserUtils userUtils;
+    private final HttpHeaders HttpHeadersPNG;
+    private final FileServiceImpl fileService;
+    private final HeaderConfig.HeaderService headerService;
 
     @GetMapping(path = "")
     public ResponseEntity<List<FileEntityDTO>> getAllFiles() {
@@ -53,11 +49,7 @@ public class FileController {
             @ModelAttribute FileEntityParamsDTO fileEntityParamsDTO,
             @RequestParam(defaultValue = "1") int pageNumber
     ) {
-        log.info("зашел в контроллер на серч, имею дто из запрос {}", fileEntityParamsDTO.toString());
-        log.info("номер страницы {}", pageNumber);
-
         Page<FileEntityDTO> fileEntityDTOS = fileService.searchFiles(fileEntityParamsDTO, pageNumber);
-        log.info("получил из сервиса готовую страницу");
         return ResponseEntity.ok()
                 .body(fileEntityDTOS);
     }
@@ -68,12 +60,9 @@ public class FileController {
      */
     @GetMapping(path = "/{id}/thumbnail")
     public ResponseEntity<byte[]> getFileThumbnail(@PathVariable Long id) {
-        FileEntity fileEntity = fileService.getFile(id);
-        byte[] thumbnailData = fileService.generateThumbnail(fileEntity.getData(), fileEntity.getFiletype());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
+        byte[] thumbnailData = fileService.getThumbnailFile(id);
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(HttpHeadersPNG)
                 .body(thumbnailData);
     }
 
@@ -84,12 +73,7 @@ public class FileController {
             @RequestPart("params") String paramsJson
     ) throws IOException
     {
-        ObjectMapper objectMapper = new ObjectMapper();
-        FileEntityUpdateDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityUpdateDTO.class);
-
-        log.info("получили файл с параметрами {}", file.getOriginalFilename());
-        log.info("получили дто с  параметрами {}", paramsDTO.toString());
-        return fileService.storeFile(file, paramsDTO);
+        return fileService.storeFile(file, paramsJson);
     }
 
     // используется на странице с информацией о текущем файле
@@ -114,17 +98,9 @@ public class FileController {
             throws UnsupportedEncodingException
     {
         FileEntity fileEntity = fileService.getFile(id);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(fileEntity.getFiletype()));
-
-        String dispositionType = download ? "attachment" : "inline";
-        String encodedFilename = URLEncoder.encode(fileEntity.getFilename(), StandardCharsets.UTF_8).replace("+", "%20");
-        String contentDisposition = String.format("%s; filename=\"%s\"", dispositionType, encodedFilename);
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
-
+        HttpHeaders httpHeader = headerService.headersToInteractFile(fileEntity, download);
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(httpHeader)
                 .body(fileEntity.getData());
     }
 
@@ -134,9 +110,7 @@ public class FileController {
             @RequestBody FileEntityUpdateDTO fileEntityUpdateDTO,
             @PathVariable Long id
     ) {
-        log.info("получил с фронта дто с изменениями {}", fileEntityUpdateDTO.toString());
         FileEntityDTO fileEntityDTO = fileService.update(fileEntityUpdateDTO, id);
-        log.info("в сервисе все отработало, получил обратно общую дто с изменённой сущностью {}", fileEntityDTO.toString());
         return ResponseEntity.ok().body(fileEntityDTO);
     }
 
