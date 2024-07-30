@@ -1,8 +1,6 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
-import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
@@ -26,8 +24,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -37,14 +33,7 @@ import java.util.List;
 public class FileController {
 
     private FileServiceImpl fileService;
-    private FileEntityMapper fileEntityMapper;
     private UserUtils userUtils;
-//    @GetMapping(path = "")
-//    public ResponseEntity<List<FileEntity>> getFiles() {
-//        List<FileEntity> fileEntities = fileService.findAll();
-//        return ResponseEntity.ok()
-//                .body(fileEntities);
-//    }
 
     @GetMapping(path = "")
     public ResponseEntity<List<FileEntityDTO>> getAllFiles() {
@@ -52,10 +41,9 @@ public class FileController {
         return ResponseEntity.ok().body(fileEntityDTOS);
     }
 
-    @GetMapping(path = "for_users")
+    @GetMapping(path = "for_user")
     public ResponseEntity<List<FileEntityDTO>> getAllFilesForUsers() {
-        Long userId = userUtils.getCurrentUser().getIdUser();
-        List<FileEntityDTO> fileEntityDTOS = fileService.getAllForUsers(userId);
+        List<FileEntityDTO> fileEntityDTOS = fileService.getAllForUsers();
         return ResponseEntity.ok().body(fileEntityDTOS);
     }
 
@@ -64,8 +52,6 @@ public class FileController {
     public ResponseEntity<Page<FileEntityDTO>> search(
             @ModelAttribute FileEntityParamsDTO fileEntityParamsDTO,
             @RequestParam(defaultValue = "1") int pageNumber
-//            @RequestParam(defaultValue = "filename") String sortBy,
-//            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
         log.info("зашел в контроллер на серч, имею дто из запрос {}", fileEntityParamsDTO.toString());
         log.info("номер страницы {}", pageNumber);

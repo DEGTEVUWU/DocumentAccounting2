@@ -14,8 +14,7 @@ import java.util.List;
 @Service
 public interface FileService {
     List<FileEntityDTO> getAll();
-    List<FileEntityDTO> getAllForUsers(Long userId);
-//    List<FileEntity> findAll();
+    List<FileEntityDTO> getAllForUsers();
     Page<FileEntityDTO> searchFiles(
             FileEntityParamsDTO params,
             int pageNumber

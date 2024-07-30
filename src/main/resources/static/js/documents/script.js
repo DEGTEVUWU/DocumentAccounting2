@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(user => {
             const roles = user.roles.map(role => role.name);
-            let endpoint = '/api/documents/for_users';
+            let endpoint = '/api/documents/for_user';
 
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_MODERATOR')) {
                 endpoint = '/api/documents';

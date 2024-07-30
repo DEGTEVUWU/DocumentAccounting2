@@ -8,7 +8,7 @@ async function fetchFiles() {
         if (userResponse.ok) {
             const user = await userResponse.json();
             const roles = user.roles.map(role => role.name);
-            let endpoint = '/api/files/for_users';
+            let endpoint = '/api/files/for_user';
 
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_MODERATOR')) {
                 endpoint = '/api/files';

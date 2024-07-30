@@ -1,15 +1,14 @@
 package com.ivan_degtev.documentaccounting2.controller;
+
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.service.DocumentService;
-import com.ivan_degtev.documentaccounting2.service.impl.DocumentServiceImpl;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +23,10 @@ import java.util.List;
 @RequestMapping(path = "/api/documents")
 @AllArgsConstructor
 @RestController
+@Slf4j
 public class DocumentController {
     private final DocumentService documentService;
     private final UserUtils userUtils;
-    private final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
     @GetMapping(path = "")
     @ResponseStatus(HttpStatus.OK)
@@ -36,9 +35,9 @@ public class DocumentController {
         return ResponseEntity.ok()
                 .body(documents);
     }
-    @GetMapping(path = "/for_users")
+    @GetMapping(path = "/for_user")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<DocumentDTO>> indexForUsers() {
+    public ResponseEntity<List<DocumentDTO>> indexForUser() {
         Long userId = userUtils.getCurrentUser().getIdUser();
         List<DocumentDTO> documents = documentService.getAllForUsers(userId);
         return ResponseEntity.ok()
@@ -50,10 +49,7 @@ public class DocumentController {
             @ModelAttribute DocumentParamsDTO documentsParamsDTO,
             @RequestParam(defaultValue = "1") int pageNumber
     ) {
-        logger.info("зашел в контроллер на серч, имею дто из запрос {}", documentsParamsDTO.toString()
-                + " и номер страницы {}", pageNumber);
         Page<DocumentDTO> documents = documentService.getAllByParameters(documentsParamsDTO, pageNumber);
-        logger.info("получил из сервиса готовую страницу");
         return ResponseEntity.ok()
                 .body(documents);
     }
@@ -71,7 +67,6 @@ public class DocumentController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR') or @userUtils.currentUserIsAuthorForDocuments(#id)" +
             " or @userUtils.currentDocumentIsPublicOrAvailableForDocuments(#id)")
     public ResponseEntity<DocumentDTO> show(@PathVariable Long id) {
-        logger.info("Запрошен документ с ID: {}", id);
         DocumentDTO document = documentService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(document);
     }

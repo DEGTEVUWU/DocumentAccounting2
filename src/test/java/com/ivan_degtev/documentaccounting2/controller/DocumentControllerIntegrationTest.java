@@ -111,7 +111,7 @@ class DocumentControllerIntegrationTest {
         registerNeUser();
         loginNeUser();
 
-        mockMvc.perform(get("/api/documents/for_users")
+        mockMvc.perform(get("/api/documents/for_user")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))

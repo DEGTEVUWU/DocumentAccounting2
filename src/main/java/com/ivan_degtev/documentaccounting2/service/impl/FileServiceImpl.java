@@ -54,10 +54,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<FileEntityDTO> getAllForUsers(Long userId) {
-        log.info("зашёл в метод сервиса для юзеров, айди {}", userId);
+    public List<FileEntityDTO> getAllForUsers() {
+        Long userId = userUtils.getCurrentUser().getIdUser();
         List<FileEntity> fileEntities = fileRepository.findAllByAuthorIdUserAndPublicFile(userId);
-        log.info("получил данные из репозитория, первый файл из них {}", fileEntities.get(0).toString());
         List<FileEntityDTO> resultList = fileEntities.stream()
                 .map(fileEntityMapper::toFileEntityDTO)
                 .toList();
