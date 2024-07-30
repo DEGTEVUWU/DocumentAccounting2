@@ -5,7 +5,7 @@ PROJECT_PATH=~/proj/DocAcc/DocumentAccounting2
 
 # Адрес виртуальной машины и пользователь, адрес vm может меняться в текущей сборке, тк пока он динамический - чекать в YC
 VM_USER=ivan_vm
-VM_IP=158.160.126.62
+VM_IP=84.201.157.0
 
 # Путь на виртуальной машине
 VM_PROJECT_PATH=/home/ivan_vm

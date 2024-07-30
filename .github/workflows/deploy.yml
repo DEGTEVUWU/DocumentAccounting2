@@ -21,7 +21,7 @@ jobs:
       - name: Copy project and redeploy
         env:
           VM_USER: ivan_vm
-          VM_IP: 158.160.126.62
+          VM_IP: 84.201.157.0
           VM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
           VM_DOCKER_COMPOSE_FROM_PROJECT_PATH: /home/ivan_vm/DocumentAccounting2
         run: |
