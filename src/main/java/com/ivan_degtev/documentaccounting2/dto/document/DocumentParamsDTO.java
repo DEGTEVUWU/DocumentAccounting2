@@ -1,15 +1,11 @@
 package com.ivan_degtev.documentaccounting2.dto.document;
 
-import com.ivan_degtev.documentaccounting2.utils.UserUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -27,7 +23,6 @@ public class DocumentParamsDTO {
 
     private Boolean publicDocument = true;
 
-    // Для сортировки
-    private String sortBy; // поле, по которому нужно сортировать ('title', 'author', ...)
-    private String sortDirection; // направление ('asc' или 'desc')
+    private String sortBy;
+    private String sortDirection;
 }

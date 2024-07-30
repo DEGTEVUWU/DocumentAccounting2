@@ -5,11 +5,10 @@ import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
 import com.ivan_degtev.documentaccounting2.dto.user.UserDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
+import com.ivan_degtev.documentaccounting2.mapper.config.JsonNullableMapper;
 import com.ivan_degtev.documentaccounting2.model.Role;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.RoleRepository;
-import lombok.AllArgsConstructor;
-import org.elasticsearch.client.Node;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

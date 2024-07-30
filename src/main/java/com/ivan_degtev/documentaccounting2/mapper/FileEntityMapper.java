@@ -2,6 +2,7 @@ package com.ivan_degtev.documentaccounting2.mapper;
 
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
+import com.ivan_degtev.documentaccounting2.mapper.config.JsonNullableMapper;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;

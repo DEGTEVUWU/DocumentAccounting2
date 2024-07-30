@@ -1,7 +1,6 @@
 package com.ivan_degtev.documentaccounting2.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ivan_degtev.documentaccounting2.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,6 +18,7 @@ public class UpdateUserDTOForAdmin {
     private JsonNullable<String> name;
     private JsonNullable<String> lastName;
     private JsonNullable<String> photo;
+
     @JsonProperty("role_ids")
     private JsonNullable<Set<Long>> roleIds;
 }

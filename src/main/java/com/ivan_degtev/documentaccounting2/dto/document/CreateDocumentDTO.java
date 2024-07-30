@@ -2,11 +2,9 @@ package com.ivan_degtev.documentaccounting2.dto.document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ivan_degtev.documentaccounting2.annotation.ValidUser;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.Set;
 
@@ -23,7 +21,7 @@ public class CreateDocumentDTO {
     @JsonProperty("type_id")
     private Long typeId;
     @JsonProperty(value = "public_document", defaultValue = "false")
-    private Boolean publicDocument = false; //по умолчанию, при отсутсвии поля в ДТО
+    private Boolean publicDocument = false;
     @JsonProperty("available_for")
     private Set<Long> availableFor;
 }

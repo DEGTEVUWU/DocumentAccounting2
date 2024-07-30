@@ -11,6 +11,7 @@ import java.util.Set;
 @Getter
 @ToString
 public class FileEntityUpdateDTO {
+
     @JsonProperty(value = "public_document", defaultValue = "false")
     private Boolean publicEntity = false;
 

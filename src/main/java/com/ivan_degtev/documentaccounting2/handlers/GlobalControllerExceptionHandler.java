@@ -51,10 +51,12 @@ public class GlobalControllerExceptionHandler {
     public ResponseStatusException handleBadCredentialsException(BadCredentialsException ex) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad credentials");
     }
+
     @ExceptionHandler(ResourceNotValidException.class)
     public ResponseEntity<String> handleResourceNotValidException(ResourceNotValidException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
     @ExceptionHandler(NotAuthenticatedException.class)
     public ResponseEntity<String> handleResourceNotValidException(NotAuthenticatedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
