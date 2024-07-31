@@ -1,16 +1,23 @@
-package com.ivan_degtev.documentaccounting2.mapper.config;
+package com.ivan_degtev.documentaccounting2.mapper;
 
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
-import com.ivan_degtev.documentaccounting2.mapper.ReferenceMapper;
+import com.ivan_degtev.documentaccounting2.mapper.config.ReferenceMapper;
+import com.ivan_degtev.documentaccounting2.mapper.config.JsonNullableMapper;
 import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.service.other.UserMappingImpl;
-import lombok.AllArgsConstructor;
+import com.ivan_degtev.documentaccounting2.mapper.utils.impl.MappingIdAndEntityDataImpl;
 import lombok.Setter;
-import org.mapstruct.*;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
 import com.ivan_degtev.documentaccounting2.model.Document;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
@@ -23,8 +30,7 @@ import java.util.Set;
 @Setter
 public abstract class DocumentMapper {
 
-    protected UserMappingImpl userMapping;
-
+    protected MappingIdAndEntityDataImpl mappingIdAndEntityData;
 
     @Mapping(source = "authorId", target = "author")
     @Mapping(source = "typeId", target = "type")
@@ -44,13 +50,23 @@ public abstract class DocumentMapper {
     @Mapping(source = "availableFor", target = "availableFor", qualifiedByName = "mappingFromDtoToEntity")
     public abstract void update(UpdateDocumentDTO dto, @MappingTarget Document document);
 
+    /**
+     * @param users - сет юзеров
+     * @return сет id этих юзеров
+     * Используется для маппинга Сета сущностей юзера в id этих юзеров
+     */
     @Named("mappingFromEntityToDto")
     public Set<Long> mappingFromEntityToDto(Set<User> users) {
-        return userMapping.convertEntitiesToIds(users);
+        return mappingIdAndEntityData.convertEntitiesToIds(users);
     }
 
+    /**
+     * @param userIds - сет id
+     * @return сет сущностей юзера
+     * Используется для маппинга Сета id юзеров в Сет самих сущностей юзера
+     */
     @Named("mappingFromDtoToEntity")
     public Set<User> mappingFromDtoToEntity(Set<Long> userIds) {
-        return userMapping.convertIdsToEntities(userIds, User.class);
+        return mappingIdAndEntityData.convertIdsToEntities(userIds, User.class);
     }
 }

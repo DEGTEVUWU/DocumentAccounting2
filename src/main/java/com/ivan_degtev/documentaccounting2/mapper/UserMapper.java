@@ -4,15 +4,21 @@ import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
 import com.ivan_degtev.documentaccounting2.dto.user.UserDTO;
-import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.mapper.config.JsonNullableMapper;
+import com.ivan_degtev.documentaccounting2.mapper.config.ReferenceMapper;
+import com.ivan_degtev.documentaccounting2.mapper.utils.impl.MappingIdAndEntityDataImpl;
 import com.ivan_degtev.documentaccounting2.model.Role;
 import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.repository.RoleRepository;
-import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Setter;
 
-import java.util.HashSet;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
 import java.util.Set;
 
 @Mapper(
@@ -21,9 +27,10 @@ import java.util.Set;
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
+@Setter
 public abstract class UserMapper {
-    @Autowired
-    private RoleRepository roleRepository;
+
+    protected MappingIdAndEntityDataImpl mappingIdAndEntityData;
 
     @Mapping(source = "idUser",  target = "id")
     public abstract UserDTO toDTO(User user);
@@ -33,12 +40,14 @@ public abstract class UserMapper {
     @Mapping(source = "roleIds", target = "roles", qualifiedByName = "roleIdsToModel")
     public abstract void updateForAdmin(UpdateUserDTOForAdmin updateUserDTO, @MappingTarget User user);
 
+    /**
+     * @param roleIds - сет id
+     * @return сет сущностей роли
+     * Используется для маппинга Сета id ролей в Сет самих сущностей роли
+     */
     @Named("roleIdsToModel")
     public Set<Role> rolesToModel(Set<Long> roleIds) {
-        if (roleIds == null || roleIds.isEmpty()) {
-            throw new NotFoundException("RoleIds cannot be null or empty");
-        }
-        return new HashSet<>(roleRepository.findAllById(roleIds));
+        return mappingIdAndEntityData.convertIdsToEntities(roleIds, Role.class);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ivan_degtev.documentaccounting2.mapper;
+package com.ivan_degtev.documentaccounting2.mapper.config;
 
 import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 import jakarta.persistence.EntityManager;

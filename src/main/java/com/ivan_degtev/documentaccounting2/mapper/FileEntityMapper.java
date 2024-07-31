@@ -3,15 +3,21 @@ package com.ivan_degtev.documentaccounting2.mapper;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.mapper.config.JsonNullableMapper;
+import com.ivan_degtev.documentaccounting2.mapper.config.ReferenceMapper;
+import com.ivan_degtev.documentaccounting2.mapper.utils.impl.MappingIdAndEntityDataImpl;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
-import com.ivan_degtev.documentaccounting2.repository.UserRepository;
-import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Setter;
 
-import java.util.HashSet;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(
         uses = { ReferenceMapper.class, JsonNullableMapper.class },
@@ -19,10 +25,10 @@ import java.util.stream.Collectors;
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
+@Setter
 public abstract class FileEntityMapper {
 
-    @Autowired
-    private UserRepository userRepository;
+    protected MappingIdAndEntityDataImpl mappingIdAndEntityData;
 
     @Mapping(source = "author.username", target = "author")
     @Mapping(source = "availableFor", target = "availableFor", qualifiedByName = "mappingFromEntityToDto")
@@ -35,21 +41,24 @@ public abstract class FileEntityMapper {
             @MappingTarget FileEntity fileEntity
     );
 
+    /**
+     * @param users - сет юзеров
+     * @return сет id этих юзеров
+     * Используется для маппинга Сета сущностей юзера в id этих юзеров
+     */
     @Named("mappingFromEntityToDto")
     public Set<Long> mappingFromEntityToDto(Set<User> users) {
-        if (users == null || users.isEmpty()) {
-            return new HashSet<>();
-        }
-        return users.stream()
-                .map(User::getIdUser)
-                .collect(Collectors.toSet());
+        return mappingIdAndEntityData.convertEntitiesToIds(users);
+
     }
 
+    /**
+     * @param userIds - сет id
+     * @return сет сущностей юзера
+     * Используется для маппинга Сета id юзеров в Сет самих сущностей юзера
+     */
     @Named("mappingFromDtoToEntity")
     public Set<User> mappingFromDtoToEntity(Set<Long> userIds) {
-        if (userIds == null || userIds.isEmpty()) {
-            return new HashSet<>();
-        }
-        return new HashSet<>(userRepository.findAllById(userIds));
+        return mappingIdAndEntityData.convertIdsToEntities(userIds, User.class);
     }
 }

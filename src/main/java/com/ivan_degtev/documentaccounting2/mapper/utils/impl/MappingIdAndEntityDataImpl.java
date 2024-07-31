@@ -1,7 +1,9 @@
-package com.ivan_degtev.documentaccounting2.service.other;
+package com.ivan_degtev.documentaccounting2.mapper.utils.impl;
 
-import com.ivan_degtev.documentaccounting2.mapper.config.MappingIdAndEntityData;
+import com.ivan_degtev.documentaccounting2.mapper.utils.MappingIdAndEntityData;
+import com.ivan_degtev.documentaccounting2.model.Role;
 import com.ivan_degtev.documentaccounting2.model.User;
+import com.ivan_degtev.documentaccounting2.repository.RoleRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import io.swagger.annotations.Scope;
 import lombok.AllArgsConstructor;
@@ -16,18 +18,30 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 @Scope(name = "prototype", description = "")
-public class UserMappingImpl implements MappingIdAndEntityData {
+public class MappingIdAndEntityDataImpl implements MappingIdAndEntityData {
+    private final RoleRepository roleRepository;
     private UserRepository userRepository;
 
+    /**
+     * Метод, реализует интерфейс и служит для маппинга полей сущностей, которые представлены в виде Сетов id других сущностей,
+     * происходит маппинг в Сеты самих сущностей.
+     * Расширяемый(добавьте другие условия с использованием другого класса искомой сущнсти)
+     */
     @Override
     public <T> Set<T> convertIdsToEntities(Set<Long> ids, Class<T> entityClass) {
         if (entityClass.equals(User.class)) {
             return (Set<T>) new HashSet<>(userRepository.findAllById(ids));
         }
+        if (entityClass.equals(Role.class)) {
+            return (Set<T>) new HashSet<>(roleRepository.findAllById(ids));
+        }
         throw new IllegalArgumentException("Unsupported entity class: " + entityClass.getName());
     }
 
-
+    /**
+     * Метод, реализует интерфейс и служит для обратного маппинга - поле с Сетом любых сущностей
+     * будет замапено в Сет с id этих сущностей
+     */
     @Override
     public <T> Set<Long> convertEntitiesToIds(Set<T> entities) {
         return entities.stream()
