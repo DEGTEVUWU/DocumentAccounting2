@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
+import com.ivan_degtev.documentaccounting2.controller.utils.DependenciesForTests;
 import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
@@ -16,14 +17,9 @@ import com.ivan_degtev.documentaccounting2.model.Document;
 import com.ivan_degtev.documentaccounting2.model.TypeDocument;
 import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
-import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.openapitools.jackson.nullable.JsonNullableModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -51,8 +47,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Slf4j
 class DocumentControllerIntegrationTest {
-
-    private final Logger logger = LoggerFactory.getLogger(DocumentControllerIntegrationTest.class);
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -62,31 +56,21 @@ class DocumentControllerIntegrationTest {
     @Autowired
     private AuthController authController;
     @Autowired
-    private DataInitializer dataInitializer;
-    @Autowired
-    private UserUtils userUtils;
+    private DependenciesForTests dependenciesForTests;
     private String token;
-    private String invalidToken;
 
+    /**
+     * Перед каждым тестом происходит - очистка репозитория юзеров и документов; разлогиневание;
+     * принудлительный запуск компонента DataInitializer с созданием первичных юзеров; авторизация под админом для полного доступа;
+     * получения строкового представления jwtToken сессии через мапу с данными о текущей аутентификации.
+     * Создаются тестовые документы через приватный метод
+     */
     @BeforeEach
     @Transactional
     public void setUpForEach() {
-        userRepository.deleteAll();
-        logger.info("удалил перед началом теста всех юзеров");
-        documentRepository.deleteAll();
-        logger.info("удалил перед началом теста все документы");
-        authController.logoutUser();
-        dataInitializer.run(null);
-
-        logger.info("все юзеры в базе {}", userRepository.findAll().size());
-
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("admin", "password");
-        Map<String, Object> authResponse = (Map<String, Object>) authController.authenticateUser(loginRequestDTO).getBody();
+        Map<String, Object> authResponse = dependenciesForTests.initialPreparationOfTablesAndAuthentication();
         token = (String) authResponse.get("jwtToken");
-        logger.info("сделал авторизацию через админа и имею токен {}", token);
-
-        createTestDocuments();
-        logger.info("закинул 1 тестовый документ в базу {}", documentRepository.findAll().size());
+        createTestDocumentsForAdminAuthentication();
     }
 
     @Test
@@ -105,11 +89,14 @@ class DocumentControllerIntegrationTest {
                 .andExpect(jsonPath("$[1].public_document", is(false)));
     }
 
+    /**
+     * Используется регистрация пользователя с ролью Юзера и вход под ним
+     */
     @Test
     void indexForUsers() throws Exception {
         authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
 
         mockMvc.perform(get("/api/documents/for_user")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -121,10 +108,13 @@ class DocumentControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].public_document", is(true)));
     }
 
+    /**
+     * Создается DTO с параметрами для поиска и внедряется в тест через формате json
+     */
     @Test
     void searchDocumentsForAdmin() throws Exception {
         DocumentParamsDTO params = createDocumentParamsDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonParams = objectMapper.writeValueAsString(params);
 
         mockMvc.perform(get("/api/documents/search")
@@ -140,13 +130,18 @@ class DocumentControllerIntegrationTest {
                 .andDo(print())
                 .andReturn();
     }
+
+    /**
+     * Создается DTO с параметрами для поиска и внедряется в тест через формате json,
+     * но теперь от лица сущности с ролью Юзера
+     */
     @Test
     void searchDocumentsForUser() throws Exception {
         DocumentParamsDTO params = createDocumentParamsDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
 
         String jsonParams = objectMapper.writeValueAsString(params);
 
@@ -164,10 +159,10 @@ class DocumentControllerIntegrationTest {
 
     @Test
     void create() throws Exception {
-        CreateDocumentDTO createDocumentDTO = createTestDocumentDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        CreateDocumentDTO createDocumentDTO = createTestCreateDocumentDTO();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(createDocumentDTO);
-        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+        Integer idCurrentUser = Math.toIntExact(getUserIdWhoHasAccess());
 
         mockMvc.perform(post("/api/documents")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -186,7 +181,6 @@ class DocumentControllerIntegrationTest {
     @Test
     void show() throws Exception {
         Long idTestDocument = documentRepository.findAll().get(0).getId();
-        ObjectMapper objectMapper = createObjectMapper();
 
         mockMvc.perform(get("/api/documents/{documentId}", idTestDocument))
                 .andExpect(status().isOk())
@@ -208,24 +202,36 @@ class DocumentControllerIntegrationTest {
     void showForUser() throws Exception {
         Long idTestDocument = documentRepository.findAll().get(1).getId();
         authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
 
         mockMvc.perform(get("/api/documents/{documentId}", idTestDocument))
                 .andExpect(status().isForbidden());
     }
 
+    /**
+     * В тесте проверяется изменения документа для авторизованного юзера,
+     * проверяются все изменённые поля, кроме автора, к которому юзер не имеет доступа.
+     * Изменения происходят из под аутентификации под ролью Юзер(как и первичное создание тестового документа)
+     */
     @Test
     void updateForUser() throws Exception {
-//        authController.logoutUser();
-//        registerNeUser();
-//        String userToken = loginNeUser();
-        // зайти под юзером
+        authController.logoutUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
+        createTestDocumentFromUserAuthentication();
+
         UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
-        Long idDocument = documentRepository.findAll().get(0).getId();
-        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+
+        Long idDocument = documentRepository.findAll().get(2).getId();
+
+        /*
+          поле необходимо для проверки изменения поля availableFor в сущности документа,
+          по логике, оно меняется на id текущего юзера, чтоб избежать путаницы
+         */
+        Integer idCurrentUser = Math.toIntExact(getUserIdWhoHasAccess());
 
         mockMvc.perform(put("/api/documents/{idDocument}", idDocument)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -240,15 +246,18 @@ class DocumentControllerIntegrationTest {
                 .andExpect(jsonPath("$.available_for[0]", is(idCurrentUser)));
     }
 
+    /**
+     * Проверить добавление для документа нового автора, используется под аутентификации с ролью Админа
+     */
     @Test
     void updateForAdmin() throws Exception {
         UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTO();
-        updateDocumentDTO.setAuthorId(JsonNullable.of(getIdCurrentUser()));
-        // добавить в dto нового автора для документа
-        ObjectMapper objectMapper = createObjectMapper();
+        updateDocumentDTO.setAuthorId(JsonNullable.of(getUserIdWhoHasAccess()));
+
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
         Long idDocument = documentRepository.findAll().get(0).getId();
-        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
+        Integer idCurrentUser = Math.toIntExact(getUserIdWhoHasAccess());
 
         mockMvc.perform(put("/api/documents/for_admin/{idDocument}", idDocument)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -266,7 +275,7 @@ class DocumentControllerIntegrationTest {
     @Test
     void updateWithInvalidData() throws Exception {
         UpdateDocumentDTO invalidUpdateDocumentDTO = createTestNotValidUpdateDocumentDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(invalidUpdateDocumentDTO);
         Long idDocument = documentRepository.findAll().get(0).getId();
 
@@ -277,16 +286,17 @@ class DocumentControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.detail").value("must not be null, must not be null, must not be null, must not be null"))
+                .andExpect(jsonPath("$.detail")
+                        .value("must not be null, must not be null, must not be null, must not be null"))
                 .andExpect(jsonPath("$.instance").value("/api/documents/" + idDocument));
     }
     @Test
     void updateFromNotValidUser() throws Exception {
         authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
         UpdateDocumentDTO invalidUpdateDocumentDTO = createTestUpdateDocumentDTO();
-        ObjectMapper objectMapper = createObjectMapper();
+        ObjectMapper objectMapper = dependenciesForTests.createObjectMapper();
         String jsonRequest = objectMapper.writeValueAsString(invalidUpdateDocumentDTO);
         Long idDocument = documentRepository.findAll().get(0).getId();
 
@@ -295,40 +305,14 @@ class DocumentControllerIntegrationTest {
                         .content(jsonRequest)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isForbidden())
-//                .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.detail").value("Access Denied"))
                 .andExpect(jsonPath("$.instance").value(""));
     }
 
-
-//    @Test
-//    void updateDocumentWithNotFullField() throws Exception {
-//        UpdateDocumentDTO updateDocumentDTO = createTestUpdateDocumentDTOWithNotFullFields();
-//
-//        ObjectMapper objectMapper = createObjectMapper();
-//        String jsonRequest = objectMapper.writeValueAsString(updateDocumentDTO);
-//        Long idDocument = documentRepository.findAll().get(0).getId();
-//        Integer idCurrentUser = Math.toIntExact(getIdCurrentUser());
-//
-//        mockMvc.perform(patch("/api/documents/{idDocument}", idDocument)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(jsonRequest)
-//                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.title", is("newTitleNotFields")))
-//                .andExpect(jsonPath("$.number", is(1000)))
-//                .andExpect(jsonPath("$.content", is("newContentNotFields")))
-//                .andExpect(jsonPath("$.type.type", is("DEFAULT_DOCUMENT")))
-//                .andExpect(jsonPath("$.author.idUser", is(idCurrentUser)))
-//                .andExpect(jsonPath("$.public_document", is(true)))
-//                .andExpect(jsonPath("$.available_for[0]", is(null)));
-//    }
-
     @Test
     void destroy() throws Exception {
         Long documentId = documentRepository.findAll().get(0).getId();
-        logger.info("ID документа = {}", documentId);
 
         mockMvc.perform(delete("/api/documents/{id}", documentId)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -336,28 +320,54 @@ class DocumentControllerIntegrationTest {
 
         assertThat(documentRepository.findById(documentId)).isEmpty();
     }
+
     @Test
     void destroyFromNotValidUser() throws Exception {
         authController.logoutUser();
-        registerNeUser();
-        loginNeUser();
+        dependenciesForTests.registerAsUser();
+        dependenciesForTests.loginAsUser();
         Long documentId = documentRepository.findAll().get(0).getId();
-        logger.info("ID документа = {}", documentId);
 
         mockMvc.perform(delete("/api/documents/{id}", documentId)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isForbidden());
-
-//        assertThat(documentRepository.findById(documentId)).isEmpty();
     }
 
 
-    private void createTestDocuments() {
+    /*
+     * Ниже идут технические методы для тестов с кратким описанием
+     */
+
+
+     /**
+     * тех метод, для создания и сохранения в Базу тестовых документов из под авторизации юзера с ролью Юзера
+     */
+    private void createTestDocumentFromUserAuthentication() {
+        TypeDocument typeDocument = new TypeDocument();
+        typeDocument.setId((long) 100);
+        typeDocument.setType(NOTE);
+
+        Document document = new Document();
+        document.setId((long) 100);
+        document.setTitle("title 100");
+        document.setNumber((long) 100);
+        document.setContent("content 100");
+        document.setType(typeDocument);
+        document.setAuthor(userRepository.findByUsername("user").get());
+        document.setPublicDocument(true);
+
+        documentRepository.save(document);
+    }
+
+    /**
+     * тех метод, для создания и сохранения в Базу тестовых документов из под авторизации юзера с ролью Админа
+     * (создаются 2 документа)
+     */
+    private void createTestDocumentsForAdminAuthentication() {
         for (var i = 0; i < 2; i++) {
             TypeDocument typeDocument1 = new TypeDocument();
             typeDocument1.setId((long) i);
             typeDocument1.setType(NOTE);
-            logger.info("создал тестовый тип для документа {}", typeDocument1);
 
             Document document1 = new Document();
             document1.setId((long) i);
@@ -366,40 +376,15 @@ class DocumentControllerIntegrationTest {
             document1.setContent("content " + i);
             document1.setType(typeDocument1);
             document1.setAuthor(userRepository.findByUsername("admin").get());
-            log.info("сделал документ тестовый {}", document1.toString());
             document1.setPublicDocument(i == 0);
-            log.info("добавил в тестовый документ модификатор доступа {}", document1.toString());
 
-            logger.info("полностью создал тестовый докумен, его айди{}", document1.getId());
-            logger.info("полностью создал тестовый докумен, айди его автора {}", document1.getAuthor().getIdUser());
             documentRepository.save(document1);
         }
     }
-    private void registerNeUser() {
-        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
-        userRegisterDTO.setEmail("test@email.com");
-        userRegisterDTO.setUsername("user");
-        userRegisterDTO.setName("name");
-        userRegisterDTO.setPassword("1234");
-        authController.registerUser(userRegisterDTO);
-        logger.info("зарегистрировал тестового юзера в БД {}", userRepository.findByUsername("user").get().getIdUser());
 
-    }
-    private String loginNeUser() {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO("user", "1234");
-        var response = authController.authenticateUser(loginRequestDTO);
-        logger.info("авторизовался под тестовым юзером {}", userRepository.findByUsername("user").get().getIdUser());
-        String userToken = ((Map<String, String>) response.getBody()).get("jwtToken");
-        logger.info("получил токен и установил его в глобальную переменную {}", token);
-        return userToken;
-
-    }
-    private ObjectMapper createObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Поддержка Java Time API
-        objectMapper.registerModule(new JsonNullableModule()); // Поддержка JsonNullable
-        return objectMapper;
-    }
+    /**
+     * тех метод, для создания dto с параметрами поиска документов
+     */
     private DocumentParamsDTO createDocumentParamsDTO() {
         DocumentParamsDTO params = new DocumentParamsDTO();
         params.setTitleCont("title");
@@ -408,17 +393,25 @@ class DocumentControllerIntegrationTest {
         params.setSortDirection("asc");
         return params;
     }
-    private CreateDocumentDTO createTestDocumentDTO() {
+
+    /**
+     * тех метод, для создания dto для создания тестового документа
+     */
+    private CreateDocumentDTO createTestCreateDocumentDTO() {
         CreateDocumentDTO createDocumentDTO = new CreateDocumentDTO();
         createDocumentDTO.setNumber(1L);
         createDocumentDTO.setTitle("title");
         createDocumentDTO.setContent("content");
-        createDocumentDTO.setAuthorId(getIdCurrentUser());
+        createDocumentDTO.setAuthorId(getUserIdWhoHasAccess());
         createDocumentDTO.setTypeId(5L);
         createDocumentDTO.setPublicDocument(true);
-        createDocumentDTO.setAvailableFor(Set.of(getIdCurrentUser()));
+        createDocumentDTO.setAvailableFor(Set.of(getUserIdWhoHasAccess()));
         return createDocumentDTO;
     }
+
+    /**
+     * тех метод, для создания dto для изменения тестового документа
+     */
     private UpdateDocumentDTO createTestUpdateDocumentDTO() {
         UpdateDocumentDTO updateDocumentDTO = new UpdateDocumentDTO();
         updateDocumentDTO.setTitle(JsonNullable.of("newTitle"));
@@ -426,17 +419,13 @@ class DocumentControllerIntegrationTest {
         updateDocumentDTO.setNumber(JsonNullable.of((long) 1000));
         updateDocumentDTO.setTypeId(JsonNullable.of((long) 5));
         updateDocumentDTO.setPublicDocument(false);
-        updateDocumentDTO.setAvailableFor(JsonNullable.of(Set.of(getIdCurrentUser())));
+        updateDocumentDTO.setAvailableFor(JsonNullable.of(Set.of(getUserIdWhoHasAccess())));
         return updateDocumentDTO;
     }
-//    private UpdateDocumentDTO createTestUpdateDocumentDTOWithNotFullFields() {
-//        UpdateDocumentDTO updateDocumentDTO = new UpdateDocumentDTO();
-//        updateDocumentDTO.setTitle(JsonNullable.of("newTitleNotFields"));
-//        updateDocumentDTO.setContent(JsonNullable.of("newContentNotFields"));
-//        updateDocumentDTO.setAuthorId(JsonNullable.of(getIdCurrentUser()));
-//        updateDocumentDTO.setAvailableFor(JsonNullable.of(Set.of(getIdCurrentUser())));
-//        return updateDocumentDTO;
-//    }
+
+    /**
+     * тех метод, для создания dto для изменения тестового документа с невалидными полями null
+     */
     private UpdateDocumentDTO createTestNotValidUpdateDocumentDTO() {
         UpdateDocumentDTO invalidUpdateDocumentDTO = new UpdateDocumentDTO();
         invalidUpdateDocumentDTO.setTitle(JsonNullable.of(null));
@@ -448,7 +437,12 @@ class DocumentControllerIntegrationTest {
         invalidUpdateDocumentDTO.setAvailableFor(JsonNullable.of(null));
         return invalidUpdateDocumentDTO;
     }
-    private Long getIdCurrentUser() {
+
+    /**
+     * Технический метод, который всегда возращает id админа, используется в создании разных документов и дто,
+     * для внедрения в поле AvailableFor - чтоб протестировать передачу кому-то доступа на просмотр документа
+     */
+    private Long getUserIdWhoHasAccess() {
         return userRepository.findByUsername("admin").get().getIdUser();
     }
 }
