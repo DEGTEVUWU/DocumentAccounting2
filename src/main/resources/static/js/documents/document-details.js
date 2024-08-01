@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     throw new Error('Не удалось удалить документ');
                 }
                 console.log('Документ успешно удалён');
-                window.location.href = '/index.html'; // Переадресация на главную страницу после удаления
+                window.location.href = '/index.html';
             })
             .catch((error) => {
                 console.error('Ошибка:', error);
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     , currentUser, isAuthor);
 
                 if (isAuthor || isAdmin) {
-                    deleteButton.style.display = 'block'; // Показываем кнопку удаления
-                    editButton.style.display = 'block';   // Показываем кнопку редактирования
+                    deleteButton.style.display = 'block';
+                    editButton.style.display = 'block';
 
 
                 editButton.onclick = function() {
@@ -93,8 +93,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     window.location.href = editUrl;
                 };
                 } else {
-                    deleteButton.style.display = 'none';  // Скрываем кнопку удаления
-                    editButton.style.display = 'none';    // Скрываем кнопку редактирования
+                    deleteButton.style.display = 'none';
+                    editButton.style.display = 'none';
                 }
             })
             .catch(error => {

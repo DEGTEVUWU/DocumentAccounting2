@@ -31,12 +31,11 @@ async function fetchFiles() {
 
 function displayFiles(files) {
     const tbody = document.querySelector("#documentsTable tbody");
-    tbody.innerHTML = ''; // Clear existing rows
+    tbody.innerHTML = '';
 
     files.forEach(file => {
 
         const tr = document.createElement('tr');
-        // Добавляем обработчик клика на строку
         tr.addEventListener('click', () => {
             window.location.href = `file_details.html?id=${file.id}`;
         });
@@ -63,13 +62,13 @@ function displayFiles(files) {
 
         const viewTd = document.createElement('td');
         const viewBtn = document.createElement('button');
-        viewBtn.innerHTML = '&#128065;'; // Eye icon for view
+        viewBtn.innerHTML = '&#128065;';
         viewBtn.onclick = () => viewFile(file.id);
         viewTd.appendChild(viewBtn);
 
         const downloadTd = document.createElement('td');
         const downloadBtn = document.createElement('button');
-        downloadBtn.innerHTML = '&#128190;'; // Floppy disk icon for download
+        downloadBtn.innerHTML = '&#128190;';
         downloadBtn.onclick = () => downloadFile(file.id);
         downloadTd.appendChild(downloadBtn);
 

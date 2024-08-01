@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('fileType').textContent = docData.filetype;
                 document.getElementById('fileAuthor').textContent = docData.author ? docData.author : 'Неизвестный';
 
-                // Assuming you want to show the thumbnail in the content span
                 const img = document.createElement('img');
                 img.src = `/api/files/${docData.id}/thumbnail`;
                 img.alt = `${docData.filename}`;
@@ -46,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     throw new Error('Не удалось удалить файл');
                 }
                 console.log('Файл успешно удалён');
-                window.location.href = '/files.html'; // Переадресация на главную страницу после удаления
+                window.location.href = '/files.html';
             })
             .catch((error) => {
                 console.error('Ошибка:', error);
@@ -86,16 +85,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log("получил две переменые роли текущего юзера и является ли он автором файла {}", currentUser, isAuthor);
 
                 if (isAuthor || isAdmin) {
-                    deleteButton.style.display = 'block'; // Показываем кнопку удаления
-                    editButton.style.display = 'block';   // Показываем кнопку редактирования
+                    deleteButton.style.display = 'block';
+                    editButton.style.display = 'block';
 
                     editButton.onclick = function() {
                         const editUrl = `edit_file_form.html?id=${fileId}`;
                         window.location.href = editUrl;
                     };
                 } else {
-                    deleteButton.style.display = 'none';  // Скрываем кнопку удаления
-                    editButton.style.display = 'none';    // Скрываем кнопку редактирования
+                    deleteButton.style.display = 'none';
+                    editButton.style.display = 'none';
                 }
             })
             .catch(error => {
@@ -104,7 +103,5 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     deleteButton.onclick = deleteDocument;
-
-    // Загрузить данные документа при загрузке страницы
     loadDocumentData();
 });

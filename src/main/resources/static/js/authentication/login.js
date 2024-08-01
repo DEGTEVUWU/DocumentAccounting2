@@ -1,6 +1,5 @@
-/*
+/**
     логика по извлечению данных из sessionStorage и заполнению полей
-
  */
 document.addEventListener('DOMContentLoaded', function() {
     const username = sessionStorage.getItem('registeredUsername');

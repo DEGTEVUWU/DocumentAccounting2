@@ -40,67 +40,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     throw new Error('Не удалось удалить юзера');
                 }
                 console.log('Юзер успешно удалён');
-                window.location.href = '/users.html'; // Переадресация на главную страницу после удаления
+                window.location.href = '/users.html';
             })
             .catch((error) => {
                 console.error('Ошибка:', error);
             });
     }
-    // function checkUserRole() {
-    //     fetch(`/api/users/${userId}`, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     })
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error('Не удалось получить информацию о пользователе');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(user => {
-    //             const roles = user.roles.map(role => role.name);
-    //             if (roles.includes('ROLE_ADMIN')) {
-    //                 deleteButton.style.display = 'block'; // Показываем кнопку удаления
-    //                 editButton.onclick = function() {
-    //                     window.location.href = `admin_edit_user_form.html?id=${userId}`;
-    //                 };
-    //             } else {
-    //                 deleteButton.style.display = 'none'; // Скрываем кнопку удаления
-    //                 editButton.onclick = function() {
-    //                     window.location.href = `edit_user_form.html?id=${userId}`;
-    //                 };
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error('Ошибка:', error);
-    //         });
-    // }
-    // function checkCurrentUser() {
-    //     fetch(`/api/users/current-user`, {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         }
-    //     })
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error('Не удалось получить информацию о текущем юзере по аутентификации');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(user => {
-    //             if (user.id === userId) {
-    //                 deleteButton.style.display = 'block'; // Показываем кнопку удаления
-    //             } else {
-    //                 deleteButton.style.display = 'none'; // Скрываем кнопку удаления
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error('Ошибка:', error);
-    //         });
-    // }
+
     function checkCurrentUserAndRole(userIdFromData) {
         fetch(`/api/users/current-user`, {
             method: 'GET',
@@ -119,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const isCurrentUser = currentUser.id === userIdFromData;
 
                 if (isAdminOrModerator) {
-                    deleteButton.style.display = 'block'; // Показываем кнопку удаления для админов и модераторов
+                    deleteButton.style.display = 'block';
                     editButton.onclick = function() {
                         window.location.href = `admin_edit_user_form.html?id=${userId}`;
                     };
@@ -130,9 +76,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 if (isCurrentUser || isAdminOrModerator) {
-                    deleteButton.style.display = 'block'; // Показываем кнопку удаления для текущего пользователя и админов
+                    deleteButton.style.display = 'block';
                 } else {
-                    deleteButton.style.display = 'none'; // Скрываем кнопку удаления для остальных пользователей
+                    deleteButton.style.display = 'none';
                 }
             })
             .catch(error => {
@@ -140,15 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
-    // Установить обработчики событий
-    // editButton.onclick = function() {
-    //     window.location.href = `edit_user_form.html?id=${userId}`;
-    // };
     deleteButton.onclick = deleteUser;
-
-    // checkUserRole();
-    // checkCurrentUser();
-
     // Загрузить данные документа при загрузке страницы
     loadUserData();
 });

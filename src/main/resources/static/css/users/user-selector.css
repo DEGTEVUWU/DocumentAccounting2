@@ -1,7 +1,5 @@
-/* user-selector.css */
-
 .user-selector {
-    margin-bottom: 15px; /* Отступ снизу блока */
+    margin-bottom: 15px;
 }
 
 .user-selector label {
@@ -36,10 +34,10 @@
 
 /* Стили для отображения выпадающего списка */
 .user-selector select {
-    height: auto; /* Высота поля по умолчанию */
-    min-height: 40px; /* Минимальная высота поля */
-    max-height: 200px; /* Максимальная высота с полосой прокрутки */
-    overflow-y: auto; /* Добавляем прокрутку по вертикали */
+    height: auto;
+    min-height: 40px;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 /* Стили для надписи по умолчанию */

@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function fetchSearchResults(params, pageNumber) {
-    // Добавляем номер страницы в параметры запроса
     const urlParams = new URLSearchParams(params);
     urlParams.set('pageNumber', pageNumber);
 
@@ -45,7 +44,7 @@ function displaySearchResults(data) {
           <td>${docData.updateDate ? docData.updateDate : 'Нет данных'}</td>
         `;
         row.addEventListener('click', function() {
-            window.location.href = `document_details.html?id=${docData.id}`; // Исправление пути к файлу и формата URL
+            window.location.href = `document_details.html?id=${docData.id}`;
         });
     });
 }

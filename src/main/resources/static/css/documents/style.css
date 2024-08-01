@@ -56,7 +56,6 @@ button[type="submit"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    /* Убираем стандартные маржины и выравниваем кнопку слева */
     margin: 0;
     display: block;
 }
@@ -65,9 +64,10 @@ button[type="submit"]:hover {
     background-color: darkblue;
 }
 form#createForm h1 {
-    color: navy; /* Или любой цвет по вашему выбору */
-    margin-bottom: 20px; /* Отступ после заголовка для визуального разделения */
+    color: navy;
+    margin-bottom: 20px;
 }
+
 /* Стилизация выпадающего списка */
 .form-group select {
     width: 100%;
@@ -96,13 +96,13 @@ form#createForm h1 {
 }
 
 .form-group input[type="checkbox"] {
-    transform: scale(1.5); /* Увеличиваем чекбокс для лучшей видимости */
+    transform: scale(1.5);
 }
 
 /* Стилизация выпадающего списка пользователей */
 .form-group select[multiple] {
-    height: 150px; /* Увеличиваем высоту для лучшего отображения нескольких элементов */
-    overflow-y: auto; /* Добавляем вертикальную прокрутку */
+    height: 150px;
+    overflow-y: auto;
 }
 
 .form-group select[multiple] option {
@@ -110,10 +110,11 @@ form#createForm h1 {
 }
 .form-actions {
     display: flex;
-    justify-content: space-between; /* Разделение кнопки и чекбокса */
+    justify-content: space-between;
     align-items: center;
     margin-top: 20px;
 }
+
 /* Стилизация контейнера для чекбоксов */
 .user-checkbox-container {
     display: flex;
@@ -128,7 +129,7 @@ form#createForm h1 {
 
 .user-checkbox-container input[type="checkbox"] {
     margin-right: 10px;
-    transform: scale(1.2); /* Увеличиваем чекбокс для лучшей видимости */
+    transform: scale(1.2);
 }
 
 .user-checkbox-container label {

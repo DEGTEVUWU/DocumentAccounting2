@@ -39,11 +39,9 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    /* Убираем стандартные маржины и выравниваем кнопку слева */
     margin: 0;
 }
 
-/* Новый стиль для контейнера кнопок */
 .button-container {
     display: flex;
     justify-content: space-between;

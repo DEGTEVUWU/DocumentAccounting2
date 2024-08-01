@@ -58,7 +58,7 @@ function submitEditUserForm(event) {
         })
         .then(data => {
             console.log('Пользователь успешно изменен', data);
-            window.location.href = `user_details.html?id=${userId}`; // Переадресация на главную страницу после сохранения
+            window.location.href = `user_details.html?id=${userId}`;
         })
         .catch((error) => {
             console.error('Ошибка:', error);

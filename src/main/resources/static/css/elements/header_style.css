@@ -10,11 +10,11 @@
     left: 0;
     transition: opacity 0.3s; /* Плавное изменение прозрачности */
     opacity: 0.6; /* Начальная полупрозрачность */
-    z-index: 1000; /* Убедитесь, что хедер всегда находится поверх других элементов */
+    z-index: 1000;
 }
 
 .header-container:hover {
-    opacity: 1; /* Непрозрачный при наведении */
+    opacity: 1;
 }
 
 .header-container .left-buttons,
@@ -24,26 +24,26 @@
 }
 
 .header-container button {
-    margin: 0 10px; /* Отступ между кнопками */
-    padding: 8px 16px; /* Внутренние отступы */
-    background-color: #444; /* Темно-серый цвет для кнопок */
-    color: white; /* Цвет текста */
-    border: 1px solid transparent; /* Убрать видимую границу, добавить для фокуса, если необходимо */
-    cursor: pointer; /* Курсор в виде руки */
-    transition: background-color 0.3s; /* Плавное изменение цвета кнопки при наведении */
+    margin: 0 10px;
+    padding: 8px 16px;
+    background-color: #444;
+    color: white;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.3s;
     border-radius: 5px;
 }
 
 .header-container button:hover {
-    background-color: #333; /* Более темный оттенок серого при наведении */
+    background-color: #333;
 }
 
 #documentsButton, #usersButton {
-    margin-left: 10px; /* Отступ от левого края для первой кнопки */
+    margin-left: 10px;
 }
 
 #registerButton, #authButton {
-    margin-right: 10px; /* Отступ от правого края для последней кнопки */
+    margin-right: 10px;
 }
 
 

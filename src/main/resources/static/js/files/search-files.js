@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function fetchSearchResults(params, pageNumber) {
-    // Добавляем номер страницы в параметры запроса
     const urlParams = new URLSearchParams(params);
     urlParams.set('pageNumber', pageNumber);
 
@@ -31,11 +30,11 @@ function fetchSearchResults(params, pageNumber) {
 function displaySearchResults(data) {
     const tableBody = document.getElementById('filesTable')
         .getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Очистить предыдущие результаты
+    tableBody.innerHTML = '';
 
     data.content.forEach(fileData => {
         let row = tableBody.insertRow();
-        row.setAttribute('data-id', fileData.id); // Устанавливаем атрибут `data-id`
+        row.setAttribute('data-id', fileData.id);
         row.innerHTML = `
           <td>${fileData.filename}</td>
           <td>${fileData.filetype}</td>
@@ -43,15 +42,15 @@ function displaySearchResults(data) {
           <td>${fileData.creationDate}</td>
         `;
         row.addEventListener('click', function() {
-            window.location.href = `/html/files/file_details.html?id=${fileData.id}`; // Исправление пути к файлу и формата URL
+            window.location.href = `/html/files/file_details.html?id=${fileData.id}`;
         });
     });
 }
 function displayPagination(data, params) {
     const paginationContainer = document.getElementById('pagination');
-    paginationContainer.innerHTML = ''; // Очистить предыдущие элементы
+    paginationContainer.innerHTML = '';
 
-    const currentPage = data.number + 1; // Номера страниц начинаются с 0, поэтому добавляем 1
+    const currentPage = data.number + 1;
     const totalPages = data.totalPages;
 
     // Создание кнопок для переключения страниц

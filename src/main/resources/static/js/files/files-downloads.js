@@ -1,5 +1,5 @@
 async function uploadFile(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение формы
+    event.preventDefault();
 
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];

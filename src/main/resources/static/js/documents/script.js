@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <td>${docData.updateDate ? docData.updateDate : 'Нет данных'}</td>
         `;
                 row.addEventListener('click', function() {
-                    window.location.href = `document_details.html?id=${docData.id}`; // Исправление пути к файлу и формата URL
+                    window.location.href = `document_details.html?id=${docData.id}`;
                 });
             });
         })

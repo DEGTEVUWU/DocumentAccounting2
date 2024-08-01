@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         option.value = user.id;
                         option.text = user.username;
 
-                        // Проверяем, есть ли пользователь в списке доступных
                         if (docData.available_for.includes(user.id)) {
                             option.selected = true;
                         }
@@ -31,7 +30,7 @@ function submitEditForm(event) {
     const form = document.getElementById('editForm');
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
-    const fileId = new URLSearchParams(window.location.search).get('id'); // Добавлено получение documentId
+    const fileId = new URLSearchParams(window.location.search).get('id');
     jsonData.type_id = parseInt(jsonData.type_id);
     jsonData.public_document = document.getElementById('public_document').checked;
     jsonData.available_for = Array.from(document.getElementById('available_for').selectedOptions)

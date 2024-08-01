@@ -42,7 +42,7 @@ function submitForm(event) {
         })
         .then(data => {
             console.log('Документ успешно добавлен', data);
-            window.location.href = '/index.html'; // Переадресация на главную страницу после добавления
+            window.location.href = '/index.html';
         })
         .catch((error) => {
             console.error('Ошибка:', error);

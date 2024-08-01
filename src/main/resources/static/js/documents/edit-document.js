@@ -7,11 +7,9 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('title').value = docData.title;
             document.getElementById('number').value = docData.number;
             document.getElementById('content').value = docData.content;
-            document.getElementById('type_id').value = docData.type.id; // Предполагаем, что вы получаете typeId
-            // Установка флага публичности документа
+            document.getElementById('type_id').value = docData.type.id;
             document.getElementById('public_document').checked = docData.public_document;
 
-            // Установка доступных пользователей
             fetch('/api/users')
                 .then(response => response.json())
                 .then(users => {
@@ -21,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         option.value = user.id;
                         option.text = user.username;
 
-                        // Проверяем, есть ли пользователь в списке доступных
                         if (docData.available_for.includes(user.id)) {
                             option.selected = true;
                         }
@@ -39,7 +36,7 @@ function submitEditForm(event) {
     const form = document.getElementById('editForm');
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
-    const documentId = new URLSearchParams(window.location.search).get('id'); // Добавлено получение documentId
+    const documentId = new URLSearchParams(window.location.search).get('id');
     jsonData.type_id = parseInt(jsonData.type_id);
     jsonData.public_document = document.getElementById('public_document').checked;
     jsonData.available_for = Array.from(document.getElementById('available_for').selectedOptions)

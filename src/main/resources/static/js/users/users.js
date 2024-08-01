@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
             users.forEach(userData => {
                 console.log(userData); // Проверка каждого пользователя
                 let row = tableBody.insertRow();
-                row.setAttribute('data-id', userData.id); // Устанавливаем атрибут `data-id`
+                row.setAttribute('data-id', userData.id);
                 let roles = userData.roles ? Array.from(userData.roles).map(role => role.name).join(', ') : ' - ';
                 row.innerHTML = `
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         `;
                 row.addEventListener('click', function() {
-                    window.location.href = `user_details.html?id=${userData.id}`; // Исправление пути к файлу и формата URL
+                    window.location.href = `user_details.html?id=${userData.id}`;
                 });
             });
         })

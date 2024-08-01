@@ -2,30 +2,30 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     display: flex;
-    justify-content: center; /* Центрирует содержимое по горизонтали */
-    align-items: center; /* Центрирует содержимое по вертикали */
-    height: 100vh; /* Высота на весь экран */
-    background-color: #f0f4f8; /* Легкий фон всей страницы */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f4f8;
 }
 
 .container {
-    width: 600px; /* Ширина контейнера */
+    width: 600px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
-    background-color: white; /* Белый фон */
-    border-radius: 8px; /* Скругленные углы */
-    text-align: center; /* Центрирование текста */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 8px;
+    text-align: center;
 }
 
 h1 {
     color: navy;
     margin-top: 0;
-    margin-bottom: 20px; /* Отступ после заголовка для визуального разделения */
+    margin-bottom: 20px;
 }
 
 .form-group {
     margin-bottom: 15px;
-    text-align: left; /* Выравнивание текста слева */
+    text-align: left;
 }
 
 .form-group label {
@@ -56,8 +56,8 @@ h1 {
 
 /* Стилизация выпадающего списка пользователей */
 .form-group select[multiple] {
-    height: 150px; /* Увеличиваем высоту для лучшего отображения нескольких элементов */
-    overflow-y: auto; /* Добавляем вертикальную прокрутку */
+    height: 150px;
+    overflow-y: auto;
 }
 
 .form-group select[multiple] option {
@@ -67,12 +67,12 @@ h1 {
 /* Стилизация чекбокса */
 .form-group input[type="checkbox"] {
     margin-right: 10px;
-    transform: scale(1.5); /* Увеличиваем чекбокс для лучшей видимости */
+    transform: scale(1.5);
 }
 
 .form-actions {
     display: flex;
-    justify-content: space-between; /* Разделение кнопки и чекбокса */
+    justify-content: space-between;
     align-items: center;
     margin-top: 20px;
 }
@@ -101,7 +101,7 @@ input[type="file"] {
 }
 
 input[type="text"] {
-    width: calc(100% - 20px); /* Коррекция на padding */
+    width: calc(100% - 20px);
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;

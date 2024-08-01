@@ -11,23 +11,23 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 function updateAuthButton() {
     const authButton = document.getElementById('authButton');
-    const isAuthenticated = checkAuthentication(); // Функция проверки авторизации
+    const isAuthenticated = checkAuthentication();
 
     if (isAuthenticated) {
         authButton.textContent = 'Выйти';
         authButton.onclick = function() {
-            logout(); // Функция выхода из системы
+            logout();
         };
     } else {
         authButton.textContent = 'Войти';
         authButton.onclick = function() {
-            window.location.href = 'login_user.html'; // Переход на страницу входа
+            window.location.href = 'login_user.html';
         };
     }
 }
 function updateProfileButton() {
     const profileButton = document.getElementById('profileButton');
-    const isAuthenticated = checkAuthentication(); // Функция проверки авторизации
+    const isAuthenticated = checkAuthentication();
 
     if (isAuthenticated) {
         fetch('api/users/current-user', {
@@ -49,7 +49,6 @@ function updateProfileButton() {
 }
 function checkAuthentication() {
     // Логика проверки авторизации пользователя
-    // Например, проверка наличия токена в localStorage
     return !!localStorage.getItem('authToken');
 }
 
@@ -79,15 +78,6 @@ function handleAuthButtonClick() {
     }
 }
 
-//сайд бар по поиску
-// function toggleSidebar() {
-//     const sidebar = document.getElementById('sidebar');
-//     if (sidebar.style.width === '300px') {
-//         sidebar.style.width = '0';
-//     } else {
-//         sidebar.style.width = '300px';
-//     }
-// }
 function toggleSidebar(sidebarId) {
     const sidebar = document.getElementById(sidebarId);
 
@@ -112,22 +102,11 @@ function submitSearchForm(event) {
     const formData = new FormData(form);
     const params = new URLSearchParams(formData).toString();
     console.log("params - ", params);
-    // Сохранение параметров запроса в localStorage
     localStorage.setItem('searchParams', params);
 
-    // Перенаправление на страницу результатов поиска
     window.location.href = 'search_documents.html';
 }
 
-// function submitSearchFormForFiles(event) {
-//     event.preventDefault();
-//     const form = document.getElementById('searchFormForFiles');
-//     const formDataForFiles = new FormData(form);
-//     const paramsForSearchFiles = new URLSearchParams(formDataForFiles).toString();
-//     console.log("params - ", paramsForSearchFiles);
-//     localStorage.setItem('paramsForSearchFiles', paramsForSearchFiles);
-//     window.location.href = '/html/files/search_files.html';
-// }
 function submitSearchFormForFiles(event) {
     event.preventDefault();
     const form = document.getElementById('searchFormForFiles');
@@ -148,7 +127,7 @@ function adjustSearchButtonBehavior() {
 
 function displaySearchResults(data) {
     const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.innerHTML = ''; // Очистить предыдущие результаты
+    resultsContainer.innerHTML = '';
 
     data.content.forEach(doc => {
         const docElement = document.createElement('div');

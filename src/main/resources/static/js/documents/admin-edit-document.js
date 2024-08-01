@@ -6,9 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(docData => {
             document.getElementById('title').value = docData.title;
             document.getElementById('number').value = docData.number;
-            document.getElementById('author_id').value = docData.author.idUser; // Предполагаем, что вы получаете authorId
+            document.getElementById('author_id').value = docData.author.idUser;
             document.getElementById('content').value = docData.content;
-            document.getElementById('type_id').value = docData.type.id; // Предполагаем, что вы получаете typeId
+            document.getElementById('type_id').value = docData.type.id;
             // Установка доступных пользователей
             fetch('/api/users')
                 .then(response => response.json())
@@ -37,7 +37,7 @@ function submitEditForm(event) {
     const form = document.getElementById('editForm');
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
-    const documentId = new URLSearchParams(window.location.search).get('id'); // Добавлено получение documentId
+    const documentId = new URLSearchParams(window.location.search).get('id');
     jsonData.type_id = parseInt(jsonData.type_id);
     jsonData.public_document = document.getElementById('public_document').checked;
     jsonData.available_for = Array.from(document.getElementById('available_for').selectedOptions)
