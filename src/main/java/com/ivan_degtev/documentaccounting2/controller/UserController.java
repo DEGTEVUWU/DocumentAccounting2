@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    /*
+    /**
     ручки для проверки во фронте является ли автор текущего документа/ файла  текущим авторизованным юзером
      */
     @GetMapping(path = "/check-current-user-is-author/{documentId}")
@@ -98,9 +98,6 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(userDTO);
     }
-    /*
-    этот метод нужно будет после закоментировать или найти ему применение в фронте и ограничить фронтом
-     */
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

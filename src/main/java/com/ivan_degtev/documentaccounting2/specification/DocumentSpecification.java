@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -19,10 +20,10 @@ import java.time.LocalDate;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class DocumentSpecification {
 
     private UserUtils userUtils;
-    private static final Logger logger = LoggerFactory.getLogger(DocumentSpecification.class);
 
     public Specification build(DocumentParamsDTO params) {
         Long idCurrentUser = userUtils.getCurrentUser().getIdUser();
@@ -78,11 +79,8 @@ public class DocumentSpecification {
             }
 
             Subquery<Long> subquery = query.subquery(Long.class);
-            logger.info("подзапрос {}", subquery);
             Root<Document> subRoot = subquery.from(Document.class);
-            logger.info("сабрут {}", subRoot);
             Join<Document, User> subJoin = subRoot.join("availableFor", JoinType.LEFT);
-            logger.info("ссоедение таблицы документа по полю доступности для {}", subJoin);
             subquery.select(subRoot.get("id"))
                     .where(
                             cb.equal(subJoin.get("idUser"), availableForUserId),
@@ -97,7 +95,10 @@ public class DocumentSpecification {
         };
     }
 
-
+    /**
+     *     сортировка работает дефолтно по названию док-та, если даёться другой параметр в запросе, дефолтно используется прямая
+     *     сортировка, для изменения нужно дать в заапросе обратную desc
+     */
     public Sort createSort(DocumentParamsDTO params) {
         Sort sort = Sort.by("title").ascending(); // сортировка по умолчанию
         if (params.getSortBy() != null && !params.getSortBy().isEmpty()) {
@@ -107,8 +108,4 @@ public class DocumentSpecification {
         }
         return sort;
     }
-    /*
-    сортировка работает дефолтно по названию док-та, если даёться другой параметр в запросе, дефолтно используется прямая
-    сортировка, для изменения нужно дать в заапросе обратную desc
-     */
 }

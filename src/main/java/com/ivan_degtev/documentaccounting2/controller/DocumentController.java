@@ -99,5 +99,4 @@ public class DocumentController {
         documentService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

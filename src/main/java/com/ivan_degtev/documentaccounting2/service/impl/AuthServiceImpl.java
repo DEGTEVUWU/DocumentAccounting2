@@ -9,9 +9,7 @@ import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.model.enums.RoleEnum;
 import com.ivan_degtev.documentaccounting2.service.AuthService;
 import com.ivan_degtev.documentaccounting2.service.RoleService;
-import com.ivan_degtev.documentaccounting2.service.UserService;
 import com.ivan_degtev.documentaccounting2.utils.JwtUtils;
-import com.ivan_degtev.documentaccounting2.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -21,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,13 +32,18 @@ import java.util.Set;
 public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     private UserServiceImpl userService;
-    private UserUtils userUtils;
     private JwtUtils jwtUtils;
     private UserMapper userMapper;
     private PasswordEncoder encoder;
     private RoleService roleService;
 
+    /**
+     * @param loginRequestDTO
+     * в методе создается аутентификация и наполняется данными из dto, далее она помещается в контекст секьюрити
+     * @return мапа с объектами аутентификации(юзернейм, куки, jwt)
+     */
     @Override
+    @Transactional
     public Map<String, Object> authenticateUser(LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword())
@@ -57,7 +61,14 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
+
+    /**
+     * @param userRegisterDTO
+     * в методе регистрируется юзер, добавляется роль Юзера, сохраняется в БД
+     * @return мапа с ответом об успехе
+     */
     @Override
+    @Transactional
     public Map<String, Object> registerUser(UserRegisterDTO userRegisterDTO) {
         User user = userMapper.toUser(userRegisterDTO);
         user.setPassword(encoder.encode(user.getPassword()));
@@ -72,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public ResponseCookie logoutUser() {
         return jwtUtils.getCleanJwtCookie();
     }

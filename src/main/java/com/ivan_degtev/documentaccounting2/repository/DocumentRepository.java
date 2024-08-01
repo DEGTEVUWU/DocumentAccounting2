@@ -12,15 +12,17 @@ import java.util.Optional;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long>, JpaSpecificationExecutor<Document> {
+
     boolean existsDocumentByTitle(String title);
 
-    @Query(value = " SELECT d.* FROM documents d " +
-            " LEFT JOIN document_user_access dua ON d.id = dua.id_document " +
-            " WHERE d.public_document = true " +
-            " OR d.author_id_user = :authorId " +
-            " OR dua.id_user = :authorId " +
-            " GROUP BY d.id " +
-            " ORDER BY d.id ASC ", nativeQuery = true)
+    @Query("""
+            SELECT d FROM Document d
+            LEFT JOIN d.availableFor daf
+            WHERE d.publicDocument = true
+            OR d.author.idUser = :authorId
+            OR daf.idUser = :authorId
+            ORDER BY d.id ASC
+            """)
     List<Document> findAllByAuthorIdUserAndPublicDocument(@Param("authorId") Long authorId);
     Optional<Document> findDocumentById(Long documentId);
 }

@@ -1,7 +1,6 @@
 package com.ivan_degtev.documentaccounting2.controller;
 
 import com.ivan_degtev.documentaccounting2.controller.utils.DependenciesForTests;
-import com.ivan_degtev.documentaccounting2.dto.auth.UserRegisterDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.CreateDocumentDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.DocumentParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.document.UpdateDocumentDTO;
@@ -11,8 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.ivan_degtev.documentaccounting2.component.DataInitializer;
-import com.ivan_degtev.documentaccounting2.dto.auth.LoginRequestDTO;
 import com.ivan_degtev.documentaccounting2.model.Document;
 import com.ivan_degtev.documentaccounting2.model.TypeDocument;
 import com.ivan_degtev.documentaccounting2.repository.DocumentRepository;

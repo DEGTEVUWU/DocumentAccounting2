@@ -5,6 +5,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+/**
+ * Позволяет MapStruct корректно обрабатывать объекты JsonNullable, предоставляя методы для упаковки
+ * и распаковки значений,а также для проверки наличия значений.
+ * Помогает управлять сериализацией и десериализацией полей, которые могут быть нулевыми,
+ * сохраняя логику обработки null в одном месте.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )

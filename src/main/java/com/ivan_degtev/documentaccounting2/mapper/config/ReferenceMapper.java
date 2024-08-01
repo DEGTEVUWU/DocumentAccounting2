@@ -7,6 +7,9 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Преобразование id в сущности и обратно - упрощает получение объектов из базы данных на основе их id.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )

@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.Set;
 
-
+/**
+ * Класс первичной инициализации данных при запуске приложения, создает двух юзеров с ролями администратор и модератор
+ * через реализованный метод run интерфейса ApplicationRunner(срабатывает при запуске приложения и выполняет заданную логику)
+ */
 @Component
 @AllArgsConstructor
 @Slf4j

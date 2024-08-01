@@ -8,6 +8,10 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * Настраивает поведение сериализации и десериализации JSON в вашем приложении. Позволяет использовать JsonNullable
+ * в работе, используется в маппинге и при работе с объектами типа ObjectMapper
+ */
 @Configuration
 public class JacksonConfig {
     @Bean
@@ -23,4 +27,3 @@ public class JacksonConfig {
         return builder -> builder.modules(new JsonNullableModule());
     }
 }
-//класс соединяет зависимости нуллабл

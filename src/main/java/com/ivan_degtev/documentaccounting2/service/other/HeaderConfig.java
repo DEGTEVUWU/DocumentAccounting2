@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Утилитарный компонент для создания хедеров при работе с файлами  - скачивание или просмотр, реализуется через статический класс
+ * внутри бина. В контроллере при создании нужного хедера, вызвается этот бин(дефолтный - с png-хедеров, если простая операция
+ * отоброажения, или кастомный headerService, с дополнительной логикой)
+ */
 @Component
 public class HeaderConfig {
 
@@ -40,5 +45,4 @@ public class HeaderConfig {
             return headers;
         }
     }
-
 }

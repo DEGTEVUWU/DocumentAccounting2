@@ -1,6 +1,5 @@
 package com.ivan_degtev.documentaccounting2.handlers;
 
-
 import com.ivan_degtev.documentaccounting2.exceptions.NotAuthenticatedException;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;

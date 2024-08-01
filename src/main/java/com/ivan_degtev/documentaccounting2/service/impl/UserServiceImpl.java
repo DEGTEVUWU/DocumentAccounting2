@@ -9,7 +9,6 @@ import com.ivan_degtev.documentaccounting2.mapper.UserMapper;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> getAll() {
         var users = userRepository.findAll();
         return users.stream()
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO getCurrentUser(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = findByUsername(userDetails.getUsername());
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
@@ -114,6 +117,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    /**
+     * Метод используется в секьюрити для создания UserDetailsImpl, для последующего внедрения данных юзера в аутентификацию,
+     * которая далее будет внедрена в контекст секьюрити. Все это будет вызывается из основного фильтра doFilterInternal.
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -7,12 +7,14 @@ import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
+import com.ivan_degtev.documentaccounting2.mapper.utils.impl.MappingIdAndEntityDataImpl;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.FileRepository;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.FileService;
 import com.ivan_degtev.documentaccounting2.utils.UserUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -22,18 +24,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import java.io.ByteArrayOutputStream;
@@ -47,8 +47,10 @@ public class FileServiceImpl implements FileService {
     private FileRepository fileRepository;
     private final UserRepository userRepository;
     private final FileEntityMapper fileEntityMapper;
+    private final MappingIdAndEntityDataImpl mappingIdAndEntityData;
 
     @Override
+    @Transactional(readOnly = true)
     public List<FileEntityDTO> getAll() {
         List<FileEntity> fileEntities = fileRepository.findAll();
         return fileEntities.stream()
@@ -56,7 +58,11 @@ public class FileServiceImpl implements FileService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Метод для вывода только тех файлов, которые подходят по параметрам доступа(определено в контроллере)
+     */
     @Override
+    @Transactional(readOnly = true)
     public List<FileEntityDTO> getAllForUsers() {
         Long userId = userUtils.getCurrentUser().getIdUser();
         List<FileEntity> fileEntities = fileRepository.findAllByAuthorIdUserAndPublicFile(userId);
@@ -66,14 +72,13 @@ public class FileServiceImpl implements FileService {
         return resultList;
     }
 
-
-//    @Override
-//    public List<FileEntity> findAll() {
-//        log.info("зашёл в сервисный метод получить все файлы ");
-//        return fileRepository.findAll();
-//    }
-
+    /**
+     * В методе идет подготовка данных для передачи, как паарметры в репозиторий для поиска файлов по определеённым полям.
+     * Присутствует баг, по которому не получается произвести поиск, если поле с датой будет типа LocalDate, поэтому
+     * используется преобразование в String с последуещим поиском в БД через конструкцию TO_CHAR()
+     */
     @Override
+    @Transactional(readOnly = true)
     public Page<FileEntityDTO> searchFiles(FileEntityParamsDTO params, int pageNumber) {
         Long userId = userUtils.getCurrentUser().getIdUser();
         String sortBy = params.getSortBy();
@@ -93,15 +98,19 @@ public class FileServiceImpl implements FileService {
                 params.getFileNameCont(),
                 params.getAuthorCont(),
                 params.getFileTypeCont(),
-                params.getCreationDate() != null ? params.getCreationDate().toString() : null, // Преобразование даты в строку
+                params.getCreationDate() != null ? params.getCreationDate().toString() : null,
                 userId,
                 pageable);
 
         return files.map(fileEntityMapper::toFileEntityDTO);
     }
 
-
+    /**
+     * Выводит общие данные о конкретной сущности документа - типы, имя, авторов, доступы, исп. на страницах просмотра
+     * информации о файле
+     */
     @Override
+    @Transactional(readOnly = true)
     public FileEntityDTO getDataFile(Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("File with id " + id + " not found"));
@@ -109,13 +118,23 @@ public class FileServiceImpl implements FileService {
         return fileEntityMapper.toFileEntityDTO(fileEntity);
     }
 
+    /**
+     * Общий метод для получения миниатюры. Вызывает метод нахождения файла в БД, и далее этот файл прокидывет
+     * через утилитный метод создания миниатюры.
+     */
     @Override
+    @Transactional
     public byte[] getThumbnailFile(Long id) {
         FileEntity fileEntity = getFile(id);
         return generateThumbnail(fileEntity.getData(), fileEntity.getFiletype());
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_PNG);
     }
+
+    /**
+     * Утилитарный метод, создающий миниатюру файла в формате png для обложки файла. При исп с картинками - создает входной
+     * поток с данными файла, передает файл в буффер(BufferedImage), черещ библиотеку thumbnailator делает из буферизированного
+     * файла миниатюру с указанными размерами, png формат и передаёт, как способ вывода - ByteArrayOutputStream, созданный ранее.
+     * Если файл  - pdf - использует утилитный метод generatePdfThumbnail
+     */
     @Override
     public byte[] generateThumbnail(byte[] fileData, String fileType) {
         try {
@@ -137,11 +156,17 @@ public class FileServiceImpl implements FileService {
         return new byte[0];
     }
 
+    /**
+     * Утилитный метод, создающий миниатюру файла в формате png для обложки файла. При исп с пдф - создает входной
+     * поток с данными файла, передает файл в буффер(BufferedImage), черещ библиотеку apache.pdfbox - достает док-т,
+     * реднерит его первую(0 индекс) страницу в png-формат.
+     * Отдает данные типа byte[] через тот же ByteArrayOutputStream, формирую миниатюру.
+     */
     private byte[] generatePdfThumbnail(byte[] fileData) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(fileData);
         PDDocument document = PDDocument.load(bais);
         PDFRenderer pdfRenderer = new PDFRenderer(document);
-        BufferedImage pageImage = pdfRenderer.renderImageWithDPI(0, 72); // Render the first page at 72 DPI
+        BufferedImage pageImage = pdfRenderer.renderImageWithDPI(0, 72);
         document.close();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -153,7 +178,13 @@ public class FileServiceImpl implements FileService {
         return baos.toByteArray();
     }
 
+    /**
+     * Получает MultipartFile, добавляет необходимые данные(автора, тип, название) в FileEntity
+     * и параметры, что пришли на входе(доступ).
+     * Для маппинга Сетов айди юзеров в сущности  - используется внедрённый бин маппера MappingIdAndEntityData
+     */
     @Override
+    @Transactional
     public FileEntity storeFile(MultipartFile file, String paramsJson) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         FileEntityUpdateDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityUpdateDTO.class);
@@ -168,38 +199,32 @@ public class FileServiceImpl implements FileService {
             fileEntity.setPublicEntity(true);
         }
         if (paramsDTO != null && paramsDTO.getAvailableFor() != null && !paramsDTO.getAvailableFor().isEmpty()) {
-            fileEntity.setAvailableFor(mappingFromDtoToEntity(paramsDTO.getAvailableFor()));
+            fileEntity.setAvailableFor(
+                    mappingIdAndEntityData.convertIdsToEntities(
+                            paramsDTO.getAvailableFor(), User.class));
         }
-
         return fileRepository.save(fileEntity);
     }
 
-    private Set<User> mappingFromDtoToEntity(Set<Long> userIds) {
-        if (userIds == null || userIds.isEmpty()) {
-            return new HashSet<>();
-        }
-        return new HashSet<>(userRepository.findAllById(userIds));
-    }
-    //маппер в классе для теста, мб позже перенесу его в маппер, но пока здесь для наглядности
-
 
     @Override
+    @Transactional(readOnly = true)
     public FileEntity getFile(Long id) {
         return fileRepository.findById(id).orElseThrow(() -> new NotFoundException("File not found with id " + id));
     }
+
     @Override
+    @Transactional
     public FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("FileEntity with this id " + id + " not found!"));
-        log.info("нашёл в репозитории нужный файл по айди {}", fileEntity.toString());
         fileEntityMapper.update(fileEntityUpdateDTO, fileEntity);
-        log.info("замапил изменения из дто в сущность {}", fileEntity.toString());
         fileRepository.save(fileEntity);
-        log.info("сохранил обновленную сущность в репо");
         return fileEntityMapper.toFileEntityDTO(fileEntity);
     }
 
     @Override
+    @Transactional
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);
     }
