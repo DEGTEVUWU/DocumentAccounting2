@@ -25,9 +25,10 @@ public class DependenciesForTests {
     private UserRepository userRepository;
     private DocumentRepository documentRepository;
     private DataInitializer dataInitializer;
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     public ObjectMapper createObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+//        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule()); // Поддержка Java Time API
         objectMapper.registerModule(new JsonNullableModule()); // Поддержка JsonNullable
         return objectMapper;

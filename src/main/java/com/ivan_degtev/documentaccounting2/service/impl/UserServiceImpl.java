@@ -9,8 +9,10 @@ import com.ivan_degtev.documentaccounting2.mapper.UserMapper;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.UserService;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
