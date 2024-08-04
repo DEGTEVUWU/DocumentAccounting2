@@ -1,11 +1,14 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
 import com.ivan_degtev.documentaccounting2.config.security.UserDetailsImpl;
+import com.ivan_degtev.documentaccounting2.dto.address.AddressUpdateDTO;
+import com.ivan_degtev.documentaccounting2.dto.user.BaseUpdateUserDTO;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForAdmin;
 import com.ivan_degtev.documentaccounting2.dto.user.UpdateUserDTOForUser;
 import com.ivan_degtev.documentaccounting2.dto.user.UserDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.mapper.UserMapper;
+import com.ivan_degtev.documentaccounting2.model.AddressEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.UserRepository;
 import com.ivan_degtev.documentaccounting2.service.UserService;
@@ -19,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +33,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AddressServiceImpl addressService;
 
     @Override
     @Transactional(readOnly = true)
@@ -61,11 +66,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
     }
 
+    /**
+     * В двух следующих методах изменения данных юзера добавлена доп. логика по изменению
+     * (по сущности первичному добавлению адреса юзера.
+     * Идет перенаправления в AddressService и данные получаются оттуда(от внешнего API)
+     */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public UserDTO updateForUser(UpdateUserDTOForUser userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
+        if(userData.getEnteredAddress().isPresent()) {
+            user.setAddress(changeUserAddressIfAvailable(userData));
+        }
         userMapper.updateForUser(userData, user);
         userRepository.save(user);
         return userMapper.toDTO(user);
@@ -76,6 +89,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDTO updateForAdmin(UpdateUserDTOForAdmin userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
+        if (userData.getEnteredAddress() != null) {
+            user.setAddress(changeUserAddressIfAvailable(userData));
+        }
         userMapper.updateForAdmin(userData, user);
         userRepository.save(user);
         return userMapper.toDTO(user);
@@ -112,6 +128,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    /**
+     * Утилитный метод для части логики в сервисах изменения юзера - изменения адресса. Доступе для обоих сценариев
+     * - работы из под Админа или Самим юзером
+     */
+    private AddressEntity changeUserAddressIfAvailable(BaseUpdateUserDTO updateUserDTO) {
+        AddressUpdateDTO addressUpdateDTO = new AddressUpdateDTO();
+        addressUpdateDTO.setEnteredFullAddressForUpdate(updateUserDTO.getEnteredAddress().get());
+        return addressService.updateAddress(addressUpdateDTO);
+
     }
 
     @Override

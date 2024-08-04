@@ -1,18 +1,13 @@
 package com.ivan_degtev.documentaccounting2.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.openapitools.jackson.nullable.JsonNullable;
 
 @Getter
 @Setter
 @ToString
-public class UpdateUserDTOForUser {
-    private JsonNullable<String> username;
-    private JsonNullable<String> email;
-    private JsonNullable<String> password;
-    private JsonNullable<String> name;
-    private JsonNullable<String> lastName;
-    private JsonNullable<String> photo;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UpdateUserDTOForUser extends BaseUpdateUserDTO {
 }
