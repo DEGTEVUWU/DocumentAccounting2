@@ -25,4 +25,8 @@ services:
       - document_accounting_db
     environment:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://document_accounting_db:5432/document_accounting_db'
+      SPRING_DATASOURCE_USERNAME: ivan
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_LIQUIBASE_ENABLED: true
+      SPRING_LIQUIBASE_CHANGE-LOG: classpath:db/changelog/db.changelog-master.xml
       JAVA_OPTS: '-Xmx512m'

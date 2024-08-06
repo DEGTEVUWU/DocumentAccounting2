@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <include file="db/changelog/v1.0/create-roles-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-type-document-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-address-entity-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-user-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-document-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-document-user-access-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-file-entity-changelog.xml"/>
+    <include file="db/changelog/v1.0/create-file-entity-user-access.xml"/>
+
+<!--    заполнение первичными данными-->
+    <include file="db/changelog/v1.0/insert-type-document-changelog.xml"/>
+    <include file="db/changelog/v1.0/insert-roles-changelog.xml"/>
+    <include file="db/changelog/v1.0/insert-documents-changelog.xml"/>
+<!--    <include file="db/changelog/v1.0/delete-documents-changelog.xml"/>-->
+
+</databaseChangeLog>

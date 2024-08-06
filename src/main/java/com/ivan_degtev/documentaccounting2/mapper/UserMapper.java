@@ -34,7 +34,6 @@ public abstract class UserMapper {
 
     @Mapping(source = "idUser",  target = "id")
     @Mapping(source = "address.fullAddress", target = "address")
-//    @Mapping(source = "")
     public abstract UserDTO toDTO(User user);
     public abstract User toUser(UserRegisterDTO userRegisterDTO);
     public abstract void updateForUser(UpdateUserDTOForUser updateUserDTO, @MappingTarget User user);

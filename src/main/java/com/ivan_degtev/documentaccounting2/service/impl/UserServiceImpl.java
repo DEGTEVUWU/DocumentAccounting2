@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDTO updateForAdmin(UpdateUserDTOForAdmin userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
-        if (userData.getEnteredAddress() != null) {
+        if (userData.getEnteredAddress().isPresent()) {
             user.setAddress(changeUserAddressIfAvailable(userData));
         }
         userMapper.updateForAdmin(userData, user);

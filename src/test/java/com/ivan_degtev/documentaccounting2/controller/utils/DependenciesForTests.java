@@ -65,7 +65,7 @@ public class DependenciesForTests {
         userRepository.deleteAll();
         documentRepository.deleteAll();
         authController.logoutUser();
-        dataInitializer.run(null);
+        dataInitializer.onApplicationEvent(null);
 
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO("admin", "password");
         return (Map<String, Object>) authController.authenticateUser(loginRequestDTO).getBody();

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="ivan">
+        <insert tableName="roles" schemaName="public">
+            <column name="name" value="ROLE_ADMIN"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.roles WHERE name = 'ROLE_ADMIN')</where>-->
+        </insert>
+        <insert tableName="roles" schemaName="public">
+            <column name="name" value="ROLE_MODERATOR"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.roles WHERE name = 'ROLE_MODERATOR')</where>-->
+        </insert>
+        <insert tableName="roles" schemaName="public">
+            <column name="name" value="ROLE_USER"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.roles WHERE name = 'ROLE_USER')</where>-->
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

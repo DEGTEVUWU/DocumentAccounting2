@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+<!--    Этот сет нужен для демонстрационных запусков приложения и он создаёт 13 первичных документов.-->
+<!--    В проде отключить этот сет - убрав его из мастер-чейндлога-->
+
+    <!-- Создание временной таблицы для хранения ID -->
+    <changeSet id="create-temp-table" author="ivan">
+        <sql>
+            CREATE TEMPORARY TABLE temp_ids (
+                type_id INT,
+                author_id INT
+            );
+        </sql>
+    </changeSet>
+
+    <!-- Заполнение временной таблицы значениями ID -->
+    <changeSet id="populate-temp-table" author="ivan">
+        <sql>
+            INSERT INTO temp_ids (type_id, author_id)
+            VALUES (
+                           (SELECT id FROM public.type_document WHERE type = 'NOTE'),
+                           (SELECT id_user FROM public.users WHERE username = 'admin')
+                   );
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="insert-documents" author="ivan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM public.documents WHERE title = 'Title1'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="documents">
+            <column name="title" value="Title1"/>
+            <column name="number" valueNumeric="11"/>
+            <column name="content" value="Content1"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+
+        <insert tableName="documents">
+            <column name="title" value="Title2"/>
+            <column name="number" valueNumeric="22"/>
+            <column name="content" value="Content2"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title3"/>
+            <column name="number" valueNumeric="33"/>
+            <column name="content" value="Content3"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title4"/>
+            <column name="number" valueNumeric="44"/>
+            <column name="content" value="Content4"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title5"/>
+            <column name="number" valueNumeric="55"/>
+            <column name="content" value="Content5"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title6"/>
+            <column name="number" valueNumeric="66"/>
+            <column name="content" value="Content6"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title7"/>
+            <column name="number" valueNumeric="77"/>
+            <column name="content" value="Content7"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title8"/>
+            <column name="number" valueNumeric="88"/>
+            <column name="content" value="Content8"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title9"/>
+            <column name="number" valueNumeric="99"/>
+            <column name="content" value="Content9"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title10"/>
+            <column name="number" valueNumeric="100"/>
+            <column name="content" value="Content10"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title11"/>
+            <column name="number" valueNumeric="110"/>
+            <column name="content" value="Content11"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title12"/>
+            <column name="number" valueNumeric="120"/>
+            <column name="content" value="Content12"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+        <insert tableName="documents">
+            <column name="title" value="Title13"/>
+            <column name="number" valueNumeric="130"/>
+            <column name="content" value="Content13"/>
+            <column name="type_id" valueComputed="(SELECT type_id FROM temp_ids)"/>
+            <column name="author_id_user" valueComputed="(SELECT author_id FROM temp_ids)"/>
+        </insert>
+
+
+
+</changeSet>
+
+</databaseChangeLog>

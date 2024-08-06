@@ -90,7 +90,7 @@ class UserControllerTest {
         userRepository.deleteAll();
         documentRepository.deleteAll();
         authController.logoutUser();
-        dataInitializer.run(null);
+        dataInitializer.onApplicationEvent(null);
 
         userRepository.save(new User("username1", "name1", "email1@email.com", "1234"));
         userRepository.save(new User("username2", "name2", "email2@email.com", "1234"));

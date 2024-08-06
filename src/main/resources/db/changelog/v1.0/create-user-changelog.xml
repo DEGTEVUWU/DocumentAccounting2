@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- ChangeSet для создания таблицы users -->
+    <changeSet id="1" author="ivan">
+        <createTable tableName="users" schemaName="public">
+            <column name="id_user" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(60)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(30)"/>
+            <column name="photo" type="VARCHAR(80)"/>
+            <column name="address_id" type="BIGINT"/>
+            <column name="creation_date" type="DATE" defaultValueComputed="CURRENT_DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="DATE" defaultValueComputed="CURRENT_DATE">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="users" baseColumnNames="address_id"
+                                 constraintName="fk_users_address" referencedTableName="addresses"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- ChangeSet для создания таблицы user_roles -->
+    <changeSet id="2" author="ivan">
+        <createTable tableName="user_roles" schemaName="public">
+            <column name="id_user" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_role" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="id_user"
+                                 constraintName="fk_user_roles_user" referencedTableName="users"
+                                 referencedColumnNames="id_user" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="id_role"
+                                 constraintName="fk_user_roles_role" referencedTableName="roles"
+                                 referencedColumnNames="id_role" onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Additional ChangeSets for setting default values and not null constraints -->
+    <changeSet id="3" author="ivan">
+        <addDefaultValue tableName="users" columnName="creation_date" defaultValueComputed="CURRENT_DATE"/>
+        <addDefaultValue tableName="users" columnName="update_date" defaultValueComputed="CURRENT_DATE"/>
+    </changeSet>
+
+    <changeSet id="4" author="ivan">
+        <addNotNullConstraint tableName="users" columnName="creation_date"/>
+        <addNotNullConstraint tableName="users" columnName="update_date"/>
+    </changeSet>
+
+</databaseChangeLog>

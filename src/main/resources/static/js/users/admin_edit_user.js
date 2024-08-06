@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('username').value = userData.username;
             document.getElementById('email').value = userData.email;
             document.getElementById('name').value = userData.name;
-            document.getElementById('lastName').value = userData.lastName;
+            document.getElementById('last_name').value = userData.last_name;
             // document.getElementById("roles").value = roles;
             if (userData.roles) {
                 userData.roles.forEach(role => {

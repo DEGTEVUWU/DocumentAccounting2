@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
     public Map<String, Object> registerUser(UserRegisterDTO userRegisterDTO) {
         User user = userMapper.toUser(userRegisterDTO);
         user.setPassword(encoder.encode(user.getPassword()));
+        user.setCreationDate(LocalDate.now());
         Set<Role> roles = new HashSet<>();
         Role userRole = roleService.findByName(RoleEnum.ROLE_USER);
         roles.add(userRole);

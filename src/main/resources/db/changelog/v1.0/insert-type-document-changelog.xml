@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="ivan">
+        <insert tableName="type_document" schemaName="public">
+            <column name="type" value="NOTE"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.type_document WHERE type = 'NOTE')</where>-->
+        </insert>
+        <insert tableName="type_document" schemaName="public">
+            <column name="type" value="REPORT"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.type_document WHERE type = 'REPORT')</where>-->
+        </insert>
+        <insert tableName="type_document" schemaName="public">
+            <column name="type" value="PRESENTATION"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.type_document WHERE type = 'PRESENTATION')</where>-->
+        </insert>
+        <insert tableName="type_document" schemaName="public">
+            <column name="type" value="ARTICLE"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.type_document WHERE type = 'ARTICLE')</where>-->
+        </insert>
+        <insert tableName="type_document" schemaName="public">
+            <column name="type" value="DEFAULT_DOCUMENT"/>
+<!--            <where>NOT EXISTS (SELECT 1 FROM public.type_document WHERE type = 'DEFAULT_DOCUMENT')</where>-->
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

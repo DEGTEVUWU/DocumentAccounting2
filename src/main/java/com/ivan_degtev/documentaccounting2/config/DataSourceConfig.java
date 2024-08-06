@@ -1,6 +1,7 @@
 package com.ivan_degtev.documentaccounting2.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,5 +32,13 @@ public class DataSourceConfig {
     @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public SpringLiquibase liquibase() {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.xml");
+        liquibase.setDataSource(dataSource);
+        return liquibase;
     }
 }

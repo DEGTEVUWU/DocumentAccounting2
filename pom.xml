@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<commons-fuleuploads-version>1.5</commons-fuleuploads-version>
+		<liquibase.version>4.27.0</liquibase.version>
 	</properties>
 
 
@@ -207,6 +208,11 @@
 			<version>1.12</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/net.javacrumbs.json-unit/json-unit-assertj -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>${liquibase.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>net.javacrumbs.json-unit</groupId>
 			<artifactId>json-unit-assertj</artifactId>

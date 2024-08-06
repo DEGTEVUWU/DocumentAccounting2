@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="delete-documents" author="ivan">
+        <sql>
+            DELETE FROM public.documents
+                   WHERE title IN (
+                                   'Title1', 'Title2', 'Title3', 'Title4', 'Title5',
+                                   'Title6', 'Title7', 'Title8', 'Title9', 'Title10',
+                                   'Title11', 'Title12', 'Title13'
+                                  );
+        </sql>
+    </changeSet>
+</databaseChangeLog>

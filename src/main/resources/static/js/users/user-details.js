@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 document.getElementById('Username').textContent = userData.username;
                 document.getElementById('Name').textContent = userData.name ? userData.name : ' - ';
-                document.getElementById('LastName').textContent = userData.lastName ? userData.lastName : ' - ';
+                document.getElementById('LastName').textContent = userData.last_name ? userData.last_name : ' - ';
                 document.getElementById('Email').textContent = userData.email ? userData.email : ' - ';
                 document.getElementById('Roles').textContent = roles;
 
