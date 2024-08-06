@@ -93,7 +93,7 @@ kubectl apply -f ./k8s/service-spring-boot.yaml
 
 
 #### Дополнительная информация
-Документация по API/Swagger доступены по адресам при запущенном приложении 
+Документация по API/Swagger доступены по адресам при запущенном приложении  
 ``` 
 localhost:8080/v3/api-docs
 localhost:8080/swagger-ui/index.html
@@ -105,7 +105,7 @@ password: password
 ```
 
 Текущие баги или критические недоработки указаны в разделе [Issues](https://github.com/DEGTEVUWU/DocumentAccounting2/issues)  
-Обо всех моментах, уточнениях, пожелания или идеях по улучшению проекта, пишите мне [в телеграм](https://t.me/ar_terria)
+Обо всех моментах, уточнениях, пожелания или идеях по улучшению проекта, пишите мне [в телеграм](https://t.me/ar_terria)  
 
 
 
