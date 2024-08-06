@@ -28,5 +28,5 @@ services:
       SPRING_DATASOURCE_USERNAME: ivan
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_LIQUIBASE_ENABLED: true
-      SPRING_LIQUIBASE_CHANGE-LOG: classpath:db/changelog/db.changelog-master.xml
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:db/changelog/db.changelog-master.xml
       JAVA_OPTS: '-Xmx512m'

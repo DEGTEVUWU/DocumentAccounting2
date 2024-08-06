@@ -15,7 +15,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
-.src/main/resources/postman_test/
+.src/main/resources/test_code_adn_config/
 .src/test/java/com.ivan_degtev.documentaccounting2/controller/testcontrollers/
 .k8s/notWork
 *.iws

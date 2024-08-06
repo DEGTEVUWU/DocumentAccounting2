@@ -17,7 +17,13 @@
 <!--    заполнение первичными данными-->
     <include file="db/changelog/v1.0/insert-type-document-changelog.xml"/>
     <include file="db/changelog/v1.0/insert-roles-changelog.xml"/>
-    <include file="db/changelog/v1.0/insert-documents-changelog.xml"/>
+
+<!--    подключить для необходимости заполнить документы начальными данными
+        ВАЖНО! Только во 2ом запуске приложения
+        с уже инициированными первичными юзерами(админом)-->
+<!--    <include file="db/changelog/v1.0/insert-documents-changelog.xml"/>-->
+
+<!--    подключить для удаления начальных документов-->
 <!--    <include file="db/changelog/v1.0/delete-documents-changelog.xml"/>-->
 
 </databaseChangeLog>
