@@ -55,7 +55,9 @@ public class AddressServiceImpl {
     @TimeLimiter(name = "externalApi")
     public Future<AddressEntity> callExternalAPI(AddressUpdateDTO addressUpdateDTO) {
         try {
-            AddressEntity addressEntity = daDataServiceImpl.getAddressEntityOnRequest(addressUpdateDTO.getEnteredFullAddressForUpdate());
+            AddressEntity addressEntity = daDataServiceImpl.getAddressEntityOnRequest(
+                    addressUpdateDTO.getEnteredFullAddressForUpdate()
+            );
             return new AsyncResult<>(addressEntity);
         } catch (Exception e) {
             log.error("Ошибка при вызове внешнего API: {}", e.getMessage());

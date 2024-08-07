@@ -1,5 +1,6 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
+import com.ivan_degtev.documentaccounting2.mapper.AddressMapper;
 import com.ivan_degtev.documentaccounting2.service.DaDataService;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.kuliginstepan.dadata.client.domain.Suggestion;
@@ -12,6 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
 import com.ivan_degtev.documentaccounting2.model.AddressEntity;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class DaDataServiceImpl implements DaDataService {
@@ -30,12 +33,14 @@ public class DaDataServiceImpl implements DaDataService {
     private DadataClient client;
 
     private final WebClient webClient;
+    private final AddressMapper addressMapper;
 
     /**
      * Настройка данного компонента через внедрения в него WebClient через его билдинг) для работы с внешними API
      */
-    public DaDataServiceImpl(WebClient.Builder webClientBuilder) {
+    public DaDataServiceImpl(WebClient.Builder webClientBuilder, AddressMapper addressMapper) {
         this.webClient = webClientBuilder.baseUrl(externalApiDaData).build();
+        this.addressMapper = addressMapper;
     }
 
     /**
@@ -44,24 +49,18 @@ public class DaDataServiceImpl implements DaDataService {
     public AddressEntity getAddressEntityOnRequest(String query) {
         Flux<Suggestion<Address>> fullResponse =
                 getSuggestionsForAddressFromDaData(query);
-        AddressEntity addressEntity = new AddressEntity();
+        AtomicReference<AddressEntity> addressEntity = new AtomicReference<>(new AddressEntity());
         fullResponse
                 .collectList()
                 .map(suggestions -> {
                     if(!suggestions.isEmpty()) {
                         Address address = suggestions.get(0).getData();
-                        addressEntity.setCountry(address.getCountry());
-                        addressEntity.setCity(address.getCity());
-                        addressEntity.setStreet(address.getStreet());
-                        addressEntity.setHouse(address.getHouse());
-                        addressEntity.setGeoLat(address.getGeoLat());
-                        addressEntity.setGeoLon(address.getGeoLon());
-                        addressEntity.setPostalCode(address.getPostalCode());
-                        addressEntity.setFullAddress(addressEntity.getFullAddressByDataForOutput());
+                        addressEntity.set(addressMapper.mapToAddressEntity(address));
+                        addressEntity.get().setFullAddress(addressEntity.get().getFullAddressByDataForOutput());
                     }
                     return addressEntity;
                 }).block();
-        return addressEntity;
+        return addressEntity.get();
     }
 
     /**
