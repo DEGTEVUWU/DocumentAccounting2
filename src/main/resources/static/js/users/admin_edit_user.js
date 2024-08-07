@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 });
             }
+            if (userData.entered_address) {
+                document.getElementById('location').value = userData.entered_address;
+            }
         })
         .catch(error => console.error('Ошибка:', error));
 });
@@ -42,6 +45,7 @@ function submitEditUserForm(event) {
     }).filter(roleId => roleId !== null);
 
     jsonData.role_ids = role_ids;
+    jsonData.entered_address = document.getElementById('location').value;
 
     fetch(`/api/users/for-admin/${userId}`, {
         method: 'PUT',

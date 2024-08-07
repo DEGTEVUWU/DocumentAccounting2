@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('email').value = userData.email;
             document.getElementById('name').value = userData.name;
             document.getElementById('last_name').value = userData.last_name;
+            if (userData.entered_address) {
+                document.getElementById('location').value = userData.entered_address;
+            }
         })
         .catch(error => console.error('Ошибка:', error));
 });
@@ -18,6 +21,7 @@ function submitEditUserForm(event) {
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
     const userId = new URLSearchParams(window.location.search).get('id');
+    jsonData.entered_address = document.getElementById('location').value;
 
     fetch(`/api/users/${userId}`, {
         method: 'PUT',

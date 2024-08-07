@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById('Name').textContent = userData.name ? userData.name : ' - ';
                 document.getElementById('LastName').textContent = userData.last_name ? userData.last_name : ' - ';
                 document.getElementById('Email').textContent = userData.email ? userData.email : ' - ';
+                document.getElementById('address').textContent = userData.address
+                    ? userData.address
+                    : 'Адрес не установлен';
                 document.getElementById('Roles').textContent = roles;
 
                 checkCurrentUserAndRole(userData.id);
