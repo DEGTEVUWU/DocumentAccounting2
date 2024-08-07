@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- ChangeSet для создания таблицы files -->
+    <changeSet id="1" author="ivan">
+        <createTable tableName="file_entity" schemaName="public">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="filename" type="VARCHAR(255)"/>
+            <column name="filetype" type="VARCHAR(255)"/>
+            <column name="data" type="BYTEA"/>
+            <column name="author_id" type="BIGINT"/>
+            <column name="address_id" type="BIGINT"/>
+            <column name="public_entity" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="creation_date" type="DATE" defaultValueComputed="CURRENT_DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="DATE" defaultValueComputed="CURRENT_DATE">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="file_entity" baseColumnNames="author_id"
+                                 constraintName="fk_files_author" referencedTableName="users"
+                                 referencedColumnNames="id_user" onDelete="SET NULL"/>
+        <addForeignKeyConstraint baseTableName="file_entity" baseColumnNames="address_id"
+                                 constraintName="fk_files_address" referencedTableName="addresses"
+                                 referencedColumnNames="id" onDelete="SET NULL"/>
+    </changeSet>
+
+    <changeSet id="2" author="ivan">
+        <addDefaultValue tableName="file_entity" columnName="creation_date" defaultValueComputed="CURRENT_DATE"/>
+        <addDefaultValue tableName="file_entity" columnName="update_date" defaultValueComputed="CURRENT_DATE"/>
+    </changeSet>
+
+    <changeSet id="3" author="ivan">
+        <addNotNullConstraint tableName="file_entity" columnName="creation_date"/>
+        <addNotNullConstraint tableName="file_entity" columnName="update_date"/>
+    </changeSet>
+
+</databaseChangeLog>

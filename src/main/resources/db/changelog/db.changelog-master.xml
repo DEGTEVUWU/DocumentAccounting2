@@ -7,6 +7,8 @@
 
 <!--Удаление таблицы с файлами, для пересоздания ее с новыми полями, ОБЫЧНО КОММЕНТИРОВАТЬ-->
     <include file="db/changelog/v1.0/deleting/delete-file-entity-table-changelog.xml"/>
+    <include file="db/changelog/v1.0/deleting/delete-file-entity-user-access.xml"/>
+
 
     <include file="db/changelog/v1.0/create-roles-changelog.xml"/>
     <include file="db/changelog/v1.0/create-type-document-changelog.xml"/>
@@ -14,7 +16,8 @@
     <include file="db/changelog/v1.0/create-user-changelog.xml"/>
     <include file="db/changelog/v1.0/create-document-changelog.xml"/>
     <include file="db/changelog/v1.0/create-document-user-access-changelog.xml"/>
-    <include file="db/changelog/v1.0/create-file-entity-changelog.xml"/>
+<!--    <include file="db/changelog/v1.0/create-file-entity-changelog.xml"/>-->
+    <include file="db/changelog/v1.1/create-file-entity-changelog.xml"/>
     <include file="db/changelog/v1.0/create-file-entity-user-access.xml"/>
 
 <!--    заполнение первичными данными-->
