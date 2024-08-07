@@ -14,7 +14,10 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Конфиг бин, создает DataSourceTransactionManager для работы с прямым доступом к JDBC, минуя
+ * Конфиг бин, создает DataSourceTransactionManager для работы с прямым доступом к JDBC, минуя JPA
+ * (нужно пока только для обёртки метода, который ссылается на асинхронный метод по работе с внешним API)
+ * Сделан для демонстрации - идея в том, чтоб предотвратить потерю других данных, при отсутсвии ответа от внешнего сервера
+ * Также добавлен бин с конфигом liquibase - для возможной в будушем работы с БД через liquibase прямо в коде
  */
 @Configuration
 @EnableTransactionManagement

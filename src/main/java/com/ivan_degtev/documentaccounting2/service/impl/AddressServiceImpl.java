@@ -3,16 +3,19 @@ package com.ivan_degtev.documentaccounting2.service.impl;
 import com.ivan_degtev.documentaccounting2.dto.address.AddressUpdateDTO;
 import com.ivan_degtev.documentaccounting2.model.AddressEntity;
 import com.ivan_degtev.documentaccounting2.repository.AddressEntityRepository;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -50,6 +53,12 @@ public class AddressServiceImpl {
         }
     }
 
+    /**
+     * Асинхронный утилитный метод для запроса к внешнему API. Делает запрос в параллельном потоке,
+     * установлены таймауты в TimeLimiter и кол-во неудачных попыток(и др. конфигурация) в CircuitBreaker
+     * для того, чтоб завершить поток при длительном молчании внешнего API.
+     * Конфигурация resilience4j - в application.properties
+     */
     @Async
     @CircuitBreaker(name = "externalApi", fallbackMethod = "fallback")
     @TimeLimiter(name = "externalApi")

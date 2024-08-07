@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
      * @return мапа с объектами аутентификации(юзернейм, куки, jwt)
      */
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public Map<String, Object> authenticateUser(LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword())
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
      * @return мапа с ответом об успехе
      */
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public Map<String, Object> registerUser(UserRegisterDTO userRegisterDTO) {
         User user = userMapper.toUser(userRegisterDTO);
         user.setPassword(encoder.encode(user.getPassword()));
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public ResponseCookie logoutUser() {
         return jwtUtils.getCleanJwtCookie();
     }
