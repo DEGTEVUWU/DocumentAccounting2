@@ -23,6 +23,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 img.height = 100;
                 document.getElementById('fileMiniature').appendChild(img);
 
+                const geoLocationContainer = document.getElementById("fileGeoLocation");
+                geoLocationContainer.innerHTML = '';
+
+                if (docData.geo_lat && docData.geo_lon) {
+                    const latElement = document.createElement('div');
+                    latElement.textContent = docData.geo_lat + ';';
+                    geoLocationContainer.appendChild(latElement);
+
+                    const lonElement = document.createElement('div');
+                    lonElement.textContent = docData.geo_lon + ';';
+                    geoLocationContainer.appendChild(lonElement);
+                } else {
+                    geoLocationContainer.textContent = "Геолокация не установлена";
+                }
+
                 document.getElementById('fileCreationDate').textContent = docData.creationDate;
 
                 checkUserPermissions();

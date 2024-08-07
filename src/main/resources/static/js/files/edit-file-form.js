@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
                         availableForSelect.appendChild(option);
                     });
+                    if (docData.entered_address) {
+                        document.getElementById('location').value = docData.entered_address;
+                    }
                 })
                 .catch(error => console.error('Ошибка при загрузке пользователей:', error));
         })
@@ -35,6 +38,7 @@ function submitEditForm(event) {
     jsonData.public_document = document.getElementById('public_document').checked;
     jsonData.available_for = Array.from(document.getElementById('available_for').selectedOptions)
         .map(option => parseInt(option.value));
+    jsonData.entered_address = document.getElementById('location').value;
 
     fetch(`/api/files/${fileId}`, {
         method: 'PUT',

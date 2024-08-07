@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 <!--Удаление таблицы с файлами, для пересоздания ее с новыми полями, ОБЫЧНО КОММЕНТИРОВАТЬ-->
-<!--    <include file="db/changelog/v1.0/delete-file-entity-table-changelog.xml"/>-->
+    <include file="db/changelog/v1.0/deleting/delete-file-entity-table-changelog.xml"/>
 
     <include file="db/changelog/v1.0/create-roles-changelog.xml"/>
     <include file="db/changelog/v1.0/create-type-document-changelog.xml"/>
@@ -27,6 +27,6 @@
 <!--    <include file="db/changelog/v1.0/insert-documents-changelog.xml"/>-->
 
 <!--    подключить для удаления начальных документов-->
-<!--    <include file="db/changelog/v1.0/delete-documents-changelog.xml"/>-->
+<!--    <include file="db/changelog/v1.0/deleting/delete-documents-changelog.xml"/>-->
 
 </databaseChangeLog>
