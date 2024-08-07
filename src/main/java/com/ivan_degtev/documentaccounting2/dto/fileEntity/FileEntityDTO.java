@@ -18,14 +18,16 @@ public class FileEntityDTO {
     private String filename;
     private String filetype;
     private String author;
-
     @JsonIgnore
     private byte[] data;
     private Boolean publicEntity;
-
     @JsonProperty("available_for")
     private Set<Long> availableFor;
-
+    @JsonProperty("geo_lat")
+    private Double geoLat;
+    @JsonProperty("geo_lon")
+    private Double geoLon;
+    private String address;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate creationDate;
     private LocalDate updateDate;

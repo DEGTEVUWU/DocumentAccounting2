@@ -138,7 +138,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         AddressUpdateDTO addressUpdateDTO = new AddressUpdateDTO();
         addressUpdateDTO.setEnteredFullAddressForUpdate(updateUserDTO.getEnteredAddress().get());
         return addressService.updateAddress(addressUpdateDTO);
-
     }
 
     @Override

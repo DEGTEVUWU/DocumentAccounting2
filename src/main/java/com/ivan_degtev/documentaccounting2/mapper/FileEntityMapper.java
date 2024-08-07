@@ -32,6 +32,9 @@ public abstract class FileEntityMapper {
 
     @Mapping(source = "author.username", target = "author")
     @Mapping(source = "availableFor", target = "availableFor", qualifiedByName = "mappingFromEntityToDto")
+    @Mapping(source = "address.geoLat", target = "geoLat")
+    @Mapping(source = "address.geoLon", target = "geoLon")
+    @Mapping(source = "address.fullAddress", target = "address")
     public abstract FileEntityDTO toFileEntityDTO(FileEntity file);
 
     @Mapping(source = "publicEntity", target = "publicEntity")

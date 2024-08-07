@@ -7,10 +7,12 @@ async function uploadFile(event) {
     const publicDocument = document.getElementById('public_document').checked;
     const availableFor = Array.from(document.getElementById('available_for').selectedOptions)
         .map(option => parseInt(option.value));
+    const location = document.getElementById('location').value;
 
     const params = {
         public_document: publicDocument,
-        available_for: availableFor
+        available_for: availableFor,
+        entered_address: location
     };
 
     const formData = new FormData();

@@ -6,19 +6,7 @@ import com.ivan_degtev.documentaccounting2.model.interfaces.Authorable;
 import com.ivan_degtev.documentaccounting2.model.interfaces.Available;
 import com.ivan_degtev.documentaccounting2.model.interfaces.BaseEntity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ForeignKey;
+import jakarta.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -74,6 +62,11 @@ public class FileEntity implements BaseEntity, Authorable, Available {
     )
     @JsonIgnore
     private Set<User> availableFor = new HashSet<>();
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @JsonIgnore
+    private AddressEntity address;
 
     @CreatedDate
     @Column(updatable = false)

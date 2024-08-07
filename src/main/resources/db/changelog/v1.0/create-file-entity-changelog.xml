@@ -15,6 +15,7 @@
             <column name="filetype" type="VARCHAR(255)"/>
             <column name="data" type="BYTEA"/>
             <column name="author_id" type="BIGINT"/>
+            <column name="address_id" type="BIGINT"/>
             <column name="public_entity" type="BOOLEAN" defaultValueBoolean="false"/>
             <column name="creation_date" type="DATE" defaultValueComputed="CURRENT_DATE">
                 <constraints nullable="false"/>
@@ -27,6 +28,9 @@
         <addForeignKeyConstraint baseTableName="file_entity" baseColumnNames="author_id"
                                  constraintName="fk_files_author" referencedTableName="users"
                                  referencedColumnNames="id_user" onDelete="SET NULL"/>
+        <addForeignKeyConstraint baseTableName="file_entity" baseColumnNames="address_id"
+                                 constraintName="fk_files_address" referencedTableName="addresses"
+                                 referencedColumnNames="id" onDelete="SET NULL"/>
     </changeSet>
 
     <changeSet id="2" author="ivan">

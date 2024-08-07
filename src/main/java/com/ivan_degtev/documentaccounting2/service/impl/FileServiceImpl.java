@@ -1,13 +1,16 @@
 package com.ivan_degtev.documentaccounting2.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ivan_degtev.documentaccounting2.dto.address.AddressUpdateDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityParamsDTO;
 import com.ivan_degtev.documentaccounting2.dto.fileEntity.FileEntityUpdateDTO;
+import com.ivan_degtev.documentaccounting2.dto.user.BaseUpdateUserDTO;
 import com.ivan_degtev.documentaccounting2.exceptions.NotFoundException;
 import com.ivan_degtev.documentaccounting2.exceptions.ResourceNotValidException;
 import com.ivan_degtev.documentaccounting2.mapper.FileEntityMapper;
 import com.ivan_degtev.documentaccounting2.mapper.utils.impl.MappingIdAndEntityDataImpl;
+import com.ivan_degtev.documentaccounting2.model.AddressEntity;
 import com.ivan_degtev.documentaccounting2.model.FileEntity;
 import com.ivan_degtev.documentaccounting2.model.User;
 import com.ivan_degtev.documentaccounting2.repository.FileRepository;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +48,7 @@ import java.io.ByteArrayOutputStream;
 public class FileServiceImpl implements FileService {
 
     private UserUtils userUtils;
+    private AddressServiceImpl addressService;
     private FileRepository fileRepository;
     private final UserRepository userRepository;
     private final FileEntityMapper fileEntityMapper;
@@ -187,6 +192,8 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public FileEntity storeFile(MultipartFile file, String paramsJson) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JsonNullableModule());
+
         FileEntityUpdateDTO paramsDTO = objectMapper.readValue(paramsJson, FileEntityUpdateDTO.class);
 
         FileEntity fileEntity = new FileEntity();
@@ -203,6 +210,9 @@ public class FileServiceImpl implements FileService {
                     mappingIdAndEntityData.convertIdsToEntities(
                             paramsDTO.getAvailableFor(), User.class));
         }
+        if (paramsDTO != null && paramsDTO.getEnteredAddress().isPresent()) {
+            fileEntity.setAddress(changeFileEntityAddressIfAvailable(paramsDTO));
+        }
         return fileRepository.save(fileEntity);
     }
 
@@ -218,6 +228,9 @@ public class FileServiceImpl implements FileService {
     public FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("FileEntity with this id " + id + " not found!"));
+        if (fileEntityUpdateDTO != null && fileEntityUpdateDTO.getEnteredAddress().isPresent()) {
+            fileEntity.setAddress(changeFileEntityAddressIfAvailable(fileEntityUpdateDTO));
+        }
         fileEntityMapper.update(fileEntityUpdateDTO, fileEntity);
         fileRepository.save(fileEntity);
         return fileEntityMapper.toFileEntityDTO(fileEntity);
@@ -227,5 +240,11 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);
+    }
+
+    private AddressEntity changeFileEntityAddressIfAvailable(FileEntityUpdateDTO updateFileEntityDTO) {
+        AddressUpdateDTO addressUpdateDTO = new AddressUpdateDTO();
+        addressUpdateDTO.setEnteredFullAddressForUpdate(updateFileEntityDTO.getEnteredAddress().get());
+        return addressService.updateAddress(addressUpdateDTO);
     }
 }

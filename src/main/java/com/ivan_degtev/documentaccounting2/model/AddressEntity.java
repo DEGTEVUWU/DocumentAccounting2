@@ -48,6 +48,8 @@ public class AddressEntity implements BaseEntity {
     private Double geoLon;
     @OneToOne(mappedBy = "address", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User user;
+    @OneToOne(mappedBy = "address", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private FileEntity fileEntity;
 
     public String getFullAddressByDataForOutput() {
         return "Страна: " + getCountry() + ", " +

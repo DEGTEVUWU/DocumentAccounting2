@@ -5,6 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+<!--Удаление таблицы с файлами, для пересоздания ее с новыми полями, ОБЫЧНО КОММЕНТИРОВАТЬ-->
+<!--    <include file="db/changelog/v1.0/delete-file-entity-table-changelog.xml"/>-->
+
     <include file="db/changelog/v1.0/create-roles-changelog.xml"/>
     <include file="db/changelog/v1.0/create-type-document-changelog.xml"/>
     <include file="db/changelog/v1.0/create-address-entity-changelog.xml"/>
