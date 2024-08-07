@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final AddressServiceImpl addressService;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public List<UserDTO> getAll() {
         var users = userRepository.findAll();
         return users.stream()
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public UserDTO getCurrentUser(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = findByUsername(userDetails.getUsername());
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public UserDTO findById(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public void save(User user) {
         userRepository.save(user);
     }
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * Идет перенаправления в AddressService и данные получаются оттуда(от внешнего API)
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED, transactionManager = "transactionManager")
     public UserDTO updateForUser(UpdateUserDTOForUser userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, transactionManager = "transactionManager")
     public UserDTO updateForAdmin(UpdateUserDTOForAdmin userData, Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public UserDTO updateUserWithNotFullField(UpdateUserDTOForUser userData, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found: " + id));
@@ -119,13 +119,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public void delete(User user) {
         userRepository.delete(user);
     }
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * которая далее будет внедрена в контекст секьюрити. Все это будет вызывается из основного фильтра doFilterInternal.
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found"));

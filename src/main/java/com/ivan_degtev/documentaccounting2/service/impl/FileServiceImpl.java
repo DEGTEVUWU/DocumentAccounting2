@@ -55,7 +55,7 @@ public class FileServiceImpl implements FileService {
     private final MappingIdAndEntityDataImpl mappingIdAndEntityData;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public List<FileEntityDTO> getAll() {
         List<FileEntity> fileEntities = fileRepository.findAll();
         return fileEntities.stream()
@@ -67,7 +67,7 @@ public class FileServiceImpl implements FileService {
      * Метод для вывода только тех файлов, которые подходят по параметрам доступа(определено в контроллере)
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public List<FileEntityDTO> getAllForUsers() {
         Long userId = userUtils.getCurrentUser().getIdUser();
         List<FileEntity> fileEntities = fileRepository.findAllByAuthorIdUserAndPublicFile(userId);
@@ -83,7 +83,7 @@ public class FileServiceImpl implements FileService {
      * используется преобразование в String с последуещим поиском в БД через конструкцию TO_CHAR()
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public Page<FileEntityDTO> searchFiles(FileEntityParamsDTO params, int pageNumber) {
         Long userId = userUtils.getCurrentUser().getIdUser();
         String sortBy = params.getSortBy();
@@ -115,7 +115,7 @@ public class FileServiceImpl implements FileService {
      * информации о файле
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public FileEntityDTO getDataFile(Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("File with id " + id + " not found"));
@@ -128,7 +128,7 @@ public class FileServiceImpl implements FileService {
      * через утилитный метод создания миниатюры.
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public byte[] getThumbnailFile(Long id) {
         FileEntity fileEntity = getFile(id);
         return generateThumbnail(fileEntity.getData(), fileEntity.getFiletype());
@@ -189,7 +189,7 @@ public class FileServiceImpl implements FileService {
      * Для маппинга Сетов айди юзеров в сущности  - используется внедрённый бин маппера MappingIdAndEntityData
      */
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public FileEntity storeFile(MultipartFile file, String paramsJson) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JsonNullableModule());
@@ -218,13 +218,13 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public FileEntity getFile(Long id) {
         return fileRepository.findById(id).orElseThrow(() -> new NotFoundException("File not found with id " + id));
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public FileEntityDTO update(FileEntityUpdateDTO fileEntityUpdateDTO, Long id) {
         FileEntity fileEntity = fileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("FileEntity with this id " + id + " not found!"));
@@ -237,7 +237,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public void deleteFile(Long id) {
         fileRepository.deleteById(id);
     }

@@ -46,9 +46,9 @@ public class AddressEntity implements BaseEntity {
     private Double geoLat;
     @JsonProperty("geo_lon")
     private Double geoLon;
-    @OneToOne(mappedBy = "address", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "address", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
-    @OneToOne(mappedBy = "address", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "address", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FileEntity fileEntity;
 
     public String getFullAddressByDataForOutput() {

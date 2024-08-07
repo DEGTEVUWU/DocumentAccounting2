@@ -30,7 +30,7 @@ public class AddressServiceImpl {
      * и откатить только неудавшиеся изменения AddressEntity, не затронул другие сущности(напр. юзера),
      * которые меняются и вызвают этот сервис
      */
-    @Transactional(propagation = Propagation.NESTED, transactionManager = "transactionManager")
+    @Transactional(propagation = Propagation.NESTED, transactionManager = "dataSourceTransactionManager")
     public AddressEntity updateAddress(AddressUpdateDTO addressUpdateDTO) {
         Future<AddressEntity> future = callExternalAPI(addressUpdateDTO);
         AddressEntity addressEntity;

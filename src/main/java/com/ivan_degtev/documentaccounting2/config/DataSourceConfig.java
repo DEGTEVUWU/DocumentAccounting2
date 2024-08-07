@@ -23,13 +23,13 @@ public class DataSourceConfig {
     @Autowired
     private DataSource dataSource;
 
-    @Bean
+    @Bean(name = "transactionManager")
     @Primary
     public PlatformTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
-    @Bean(name = "transactionManager")
+    @Bean(name = "dataSourceTransactionManager")
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource);
     }

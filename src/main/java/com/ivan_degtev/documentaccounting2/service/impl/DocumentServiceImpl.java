@@ -43,7 +43,7 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentSpecification documentSpecification;
     private final UserUtils userUtils;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public List<DocumentDTO> getAll() {
         List<Document> documents = documentRepository.findAll();
         return documents.stream()
@@ -54,7 +54,7 @@ public class DocumentServiceImpl implements DocumentService {
     /**
      * Метод для вывода только тех документов, которые подходят по параметрам доступа(определено в контроллере)
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public List<DocumentDTO> getAllForUsers(Long userId) {
         List<Document> documents = documentRepository.findAllByAuthorIdUserAndPublicDocument(userId);
         return documents.stream()
@@ -62,7 +62,7 @@ public class DocumentServiceImpl implements DocumentService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public Page<DocumentDTO> getAllByParameters(DocumentParamsDTO params, int pageNumber) {
         Specification<Document> spec = documentSpecification.build(params);
         Sort sort = documentSpecification.createSort(params);
@@ -75,7 +75,7 @@ public class DocumentServiceImpl implements DocumentService {
      * метод для создания док обычным юзером, проверяется через утилитарный метод, есть ли док-т с таким полем title(уникальное)
      * уже в БД
      */
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public DocumentDTO create(CreateDocumentDTO documentData) throws ResourceNotValidException {
         if (documentData.getPublicDocument() == null) {
             documentData.setPublicDocument(false);
@@ -92,14 +92,14 @@ public class DocumentServiceImpl implements DocumentService {
         return documentMapper.toDTO(document);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     public DocumentDTO findById(Long id) throws ResourceNotValidException {
         var document = documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("Document with this id " + id + " not found!"));
         return documentMapper.toDTO(document);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public DocumentDTO updateForUser(UpdateDocumentDTO documentData, Long id) throws ResourceNotValidException {
         Long currentUserId = userUtils.getCurrentUser().getIdUser();
         documentData.setAuthorId(JsonNullable.of(currentUserId));
@@ -109,7 +109,7 @@ public class DocumentServiceImpl implements DocumentService {
         documentRepository.save(document);
         return documentMapper.toDTO(document);
     }
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public DocumentDTO updateForAdmin(UpdateDocumentDTO documentData, Long id) throws ResourceNotValidException {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotValidException("Document with this id " + id + " not found!"));
@@ -118,7 +118,7 @@ public class DocumentServiceImpl implements DocumentService {
         return documentMapper.toDTO(document);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public DocumentDTO updateDocumentWithNotFullField(UpdateDocumentDTO updateDTO, Long id) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Document not found: " + id));
@@ -147,12 +147,12 @@ public class DocumentServiceImpl implements DocumentService {
         return documentMapper.toDTO(document);
     }
 
-    @Transactional
+    @Transactional(transactionManager = "transactionManager")
     public void delete(Long id) {
         documentRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, transactionManager = "transactionManager")
     protected boolean isDocumentNotValidForCreate(Document currentDocument) {
         return documentRepository.existsDocumentByTitle(currentDocument.getTitle());
     }
